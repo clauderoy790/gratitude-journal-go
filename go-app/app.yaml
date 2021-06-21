@@ -1,0 +1,9 @@
+runtime: go
+env: flex
+
+# [START configuration]
+endpoints_api_service:
+  # The following values are to be replaced by information from the output of
+  # 'gcloud endpoints services deploy openapi-appengine.yaml' command.
+  name: daily-gratitude790.appspot.com
+  rollout_strategy: managed

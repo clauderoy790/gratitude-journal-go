@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="f4bb95e5-4856-44ed-b814-925face79910" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/.gcloudignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gcloudignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/.idea/gratitude-journal.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gratitude-journal.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/app.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/app.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/config/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/config/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/gratitude-journal" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/helpers/errorHelper.go" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/errorHelper.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/helpers/journalHelper.go" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/journalHelper.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/helpers/mongoHelper.go" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/mongoHelper.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/helpers/quotesHelper.go" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/quotesHelper.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/helpers/userHelper.go" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/userHelper.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/models/journal.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/journal.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/models/quote.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/quote.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/models/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/quotes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/quotes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/tests/journalHelper_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/journalHelper_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vendor/gitlab.com/gratitude-journal/tests/userHelper_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/userHelper_test.go" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GOROOT" url="file:///usr/local/Cellar/go/1.16.5/libexec" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
+  <component name="ProjectId" id="1uBkGtuRo8blwjUUQHn7FQecLqJ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="go.sdk" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+  </component>
+</project>

@@ -1,0 +1,204 @@
+swagger: "2.0"
+info:
+  description: "Daily Gratitude API"
+  title: "Daily Gratitude"
+  version: "1.0.0"
+host: "daily-gratitude790.appspot.com"
+
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+schemes:
+  - "https"
+paths:
+  "/login":
+    post:
+      description: "Used by user to login."
+      operationId: "login"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Login resp"
+          schema:
+            $ref: "#/definitions/loginResponse"
+      parameters:
+        - description: "email address"
+          in: body
+          name: email
+          required: true
+          schema:
+            type: "string"
+        - description: "password desc"
+          in: body
+          name: password
+          required: true
+          schema:
+            type: "string"
+#      security:
+#        - api_key: []
+  "/register":
+    post:
+      description: "User registration"
+      operationId: "register"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Authentication info."
+          schema:
+            $ref: "#/definitions/registerResponse"
+      parameters:
+        - description: "email address"
+          in: body
+          name: email
+          required: true
+          schema:
+            type: "string"
+        - description: "password desc"
+          in: body
+          name: password
+          required: true
+          schema:
+            type: "string"
+        - description: "verify password desc"
+          in: body
+          name: verifyPassword
+          required: true
+          schema:
+            type: "string"
+#      security:
+#        - api_key: []
+  "/journal":
+    post:
+      description: "Gets a journal entry."
+      operationId: "journal"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "journal response."
+          schema:
+            $ref: "#/definitions/journalResponse"
+      parameters:
+        - description: "id of user"
+          in: body
+          name: userId
+          required: true
+          schema:
+            type: "string"
+        - description: "date desired"
+          in: body
+          name: date
+          required: true
+          schema:
+            type: "string"
+        - description: "entry to upate"
+          in: body
+          name: entry
+          required: false
+          schema:
+            $ref: "#/definitions/journalResponse"
+#      security:
+#        - api_key: []
+  "/quote":
+    get:
+      description: "Returns a random quote"
+      operationId: "quote"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "quote return."
+          schema:
+            $ref: "#/definitions/quoteResponse"
+      parameters:
+        - description: "id of user"
+          in: body
+          name: userId
+          required: true
+          schema:
+            type: "string"
+        - description: "date desired"
+          in: body
+          name: date
+          required: true
+          schema:
+            type: "string"
+#      security:
+#        - api_key: []
+
+definitions:
+  loginResponse:
+    type: "object"
+    properties:
+      userId:
+        type: "string"
+      success:
+        type: "boolean"
+      error:
+        type: "string"
+  registerResponse:
+    type: "object"
+    properties:
+      userID:
+        type: "string"
+      error:
+        type: "string"
+  quoteResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+      author:
+        type: "string"
+      error:
+        type: "string"
+  journalResponse:
+    type: "object"
+    properties:
+      entry:
+        type: "object"
+        properties:
+          ID:
+            type: "string"
+          UserID:
+            type: "string"
+          Date:
+            type: "string"
+          Grateful1:
+            type: "string"
+          Grateful2:
+            type: "string"
+          Grateful3:
+            type: "string"
+          TodayGreat1:
+            type: "string"
+          TodayGreat2:
+            type: "string"
+          TodayGreat3:
+            type: "string"
+          Affirmation1:
+            type: "string"
+          Affirmation2:
+            type: "string"
+          HappenedGreat1:
+            type: "string"
+          HappenedGreat2:
+            type: "string"
+          HappenedGreat3:
+            type: "string"
+          Better1:
+            type: "string"
+          Better2:
+            type: "string"
+      error:
+        type: "string"
+# This section requires all requests to any path to require an API key.
+#securityDefinitions:
+#  # This section configures basic authentication with an API key.
+#  api_key:
+#    type: "apiKey"
+#    name: "key"
+#    in: "header"
