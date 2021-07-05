@@ -10,7 +10,7 @@ import (
 var email = "test@gmail.com"
 var password = "12345678"
 
-func TestDelete(t *testing.T) {
+func TestDeleteUser(t *testing.T) {
 	helpers.MongoHelper.Connect()
 	defer helpers.MongoHelper.Disconnect()
 	uh := helpers.UserHelper;
@@ -44,6 +44,10 @@ func TestRegister(t *testing.T) {
 		t.Fatalf("tried to create a valid user but it failed: %v",res.Error)
 	}
 
+	if res := uh.Register(email,password,password); res.Error == "" {
+		t.Fatalf("tried to register a user that already exists and did not get an error.")
+	}
+
 }
 
 func TestLogin(t *testing.T) {
@@ -52,22 +56,22 @@ func TestLogin(t *testing.T) {
 	uh := helpers.UserHelper;
 	uh.DeleteUser(email)
 
-	if res := uh.Login(email,"312412");res.Success || res.UserId != "" || res.Error == "" {
+	if res := uh.Login(email,"312412");res.Success || res.UserID != "" || res.Error == "" {
 		t.Fatalf("tried to login to a non registered account.")
 	}
 
 	uh.Register(email,"12345678","12345678")
 
-	if res := uh.Login(email,"312412");res.Success || res.UserId != "" || res.Error == "" {
+	if res := uh.Login(email,"312412");res.Success || res.UserID != "" || res.Error == "" {
 		t.Fatalf("tried to login to a registred account with an invalid password.")
 	}
 
 	res := uh.Login(email,"12345678")
-	if !res.Success || res.UserId == "" || res.Error != "" {
-		t.Fatalf("tried to login to a registred account with a valid password without success. %v %v %v",res.Success,res.UserId,res.Error)
+	if !res.Success || res.UserID == "" || res.Error != "" {
+		t.Fatalf("tried to login to a registred account with a valid password without success. %v %v %v",res.Success,res.UserID,res.Error)
 	}
 
-	objId, err := primitive.ObjectIDFromHex(res.UserId)
+	objId, err := primitive.ObjectIDFromHex(res.UserID)
 	if err != nil {
 		t.Fatalf("failed to convert %v to object id: ",err)
 	}

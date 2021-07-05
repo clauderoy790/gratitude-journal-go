@@ -21,13 +21,13 @@ func (UserHelp) Register(email, password, verifiedPassword string) models.Regist
 		return models.RegisterResult{"","Email must be valid."}
 	}
 	if len(password) < config.Get().App.MinPasswordLength {
-		return models.RegisterResult{"",fmt.Sprintf("Password must be at least %v characters.",config.Get().App.MinPasswordLength)}
+		return models.RegisterResult{UserID:"",Error:fmt.Sprintf("Password must be at least %v characters.",config.Get().App.MinPasswordLength)}
 	}
 	if password != verifiedPassword {
 		return models.RegisterResult{"","Passwords are not identical."}
 	}
 	if user, _ := UserHelper.GetUser(email); user.ID != primitive.NilObjectID {
-		return models.RegisterResult{"",email + " is already registered"}
+		return models.RegisterResult{UserID:"",Error:email + " is already registered"}
 	}
 
 	return registerUser(email, password)
@@ -68,7 +68,7 @@ func registerUser(email, password string) models.RegisterResult {
 			return models.RegisterResult{"","A server error occurred, try again later"}
 	}
 
-	return models.RegisterResult{insertedId.Hex(), GetErrorMessage(err)}
+	return models.RegisterResult{UserID:insertedId.Hex(), Error:GetErrorMessage(err)}
 }
 
 func hashPass(password string) (string, error) {
@@ -89,7 +89,7 @@ func (UserHelp) Login(email, password string) models.LoginResult {
 		return models.LoginResult{"", false, "This user is not registered."}
 	} else if err != nil {
 		fmt.Println("error: ",err)
-		return  models.LoginResult{"", false, "A server error occurred, try again later."}
+		return  models.LoginResult{Error:"A server error occurred, try again later."}
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
@@ -97,7 +97,7 @@ func (UserHelp) Login(email, password string) models.LoginResult {
 		return  models.LoginResult{"", false, "Password is not valid"}
 	}
 
-	return models.LoginResult{user.ID.Hex(), true, ""}
+	return models.LoginResult{UserID: user.ID.Hex(), Success:true}
 }
 
 func (UserHelp) DeleteUser(email string) (bool,error) {

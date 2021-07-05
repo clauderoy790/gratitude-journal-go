@@ -11,6 +11,7 @@ import (
 
 func main() {
 	//refreshQuotes()
+	//testQuotes()
 	startServer()
 }
 func startServer() {
@@ -18,6 +19,7 @@ func startServer() {
 	defer helpers.MongoHelper.Disconnect()
 
 	r := gin.Default()
+
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "welcome to daily gratitude",
@@ -34,36 +36,17 @@ func startServer() {
 		c.JSON(200, regReg)
 	})
 
-	r.POST("/journal", func(c *gin.Context) {
-		userId := c.PostForm("userID")
-		date := c.PostForm("date")
-		entry := c.PostForm("entry")
+	r.GET("/journal", func(c *gin.Context) {
+		userID := c.Query("userID")
+		date := c.Query("date")
 
-		if userId == "" || date == "" {
+		if userID == "" || date == "" {
 			c.JSON(200,gin.H{
 				"error":  "must provide userID and date",
 			})
-		} else if entry != "" {
-			jEntry := models.JournalEntry{}
-			err := json.Unmarshal([]byte(entry),&jEntry)
-			if err != nil {
-				c.JSON(200,gin.H{
-					"error":  "entry is not in a valid format.",
-				})
-			} else {
-				if err := helpers.JournalHelper.WriteEntry(userId,date,jEntry);err != nil {
-					c.JSON(200,gin.H{
-						"error":  err,
-					})
-				} else {
-					c.JSON(200,gin.H{
-						"entry":  jEntry,
-					})
-				}
-			}
 		} else {
 			//Read entry
-			journalRes := helpers.JournalHelper.GetEntry(userId,date)
+			journalRes := helpers.JournalHelper.GetEntry(userID,date)
 			if journalRes.Error != "" {
 				c.JSON(200,gin.H{
 					"error":  journalRes.Error,
@@ -76,6 +59,36 @@ func startServer() {
 		}
 	})
 
+	r.PUT("/journal", func(c *gin.Context) {
+		userID := c.PostForm("userID")
+		date := c.PostForm("date")
+		entry := c.PostForm("entry")
+
+		if userID == "" || date == "" {
+			c.JSON(200,gin.H{
+				"error":  "must provide userID and date",
+			})
+		} else if entry != "" {
+			jEntry := models.JournalEntry{}
+			err := json.Unmarshal([]byte(entry),&jEntry)
+			if err != nil {
+				c.JSON(200,gin.H{
+					"error":  "entry is not in a valid format.",
+				})
+			} else {
+				if err := helpers.JournalHelper.WriteEntry(userID,date,jEntry);err != nil {
+					c.JSON(200,gin.H{
+						"error":  err,
+					})
+				} else {
+					c.JSON(200,gin.H{
+						"entry":  jEntry,
+					})
+				}
+			}
+		}
+	})
+
 	if err := r.Run(fmt.Sprintf(":%v",config.Get().App.Port));err != nil {
 		panic(err)
 	}
@@ -84,4 +97,11 @@ func startServer() {
 func refreshQuotes() {
 	helpers.MongoHelper.Connect()
 	helpers.QuotesHelper.RefreshQuotes()
+	helpers.MongoHelper.Disconnect()
+}
+
+func testQuotes() {
+	helpers.MongoHelper.Connect()
+	helpers.QuoteGenerator.GenerateQuote("60ce575c2efd71a4304abf7a","2021-06-19")
+	helpers.MongoHelper.Disconnect()
 }

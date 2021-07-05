@@ -24,6 +24,7 @@ func (MongoHelp) Connect() {
 	var err error;
 	cfg := config.Get()
 	MongoHelper.Context = context.TODO()
+	//test
 	client, err = mongo.Connect(Context,options.Client().ApplyURI(fmt.Sprintf("mongodb+srv://%v:%v@%v/%v?retryWrites=true&w=majority",cfg.Database.User,cfg.Database.Password,cfg.Database.Cluster,cfg.Database.Name)))
 	if err != nil {
 		panic(err)

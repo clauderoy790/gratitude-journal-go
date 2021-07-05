@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"gitlab.com/claude.roy790/gratitude-journal/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"os"
@@ -13,16 +14,29 @@ import (
 
 var quotes []models.Quote
 var quoteFile = "quotes.txt"
-var QuotesHelper QuotesHelp = QuotesHelp{}
+var QuotesHelper QuotesHelp = QuotesHelp{-1}
 
-type QuotesHelp struct{}
+type QuotesHelp struct{
+	quotesCount int
+}
 
-func (QuotesHelp) RefreshQuotes() {
+func (q *QuotesHelp) RefreshQuotes() {
 	quotes = readQuoteFile(quoteFile)
 	rebuildQuoteCollection(quotes)
 	quote,author := findLongestQuoteAndAuthor(quotes)
 	fmt.Println("longest quote is: ",quote)
 	fmt.Println("longest author is: ",author)
+}
+
+func (q *QuotesHelp)  QuotesCount() int {
+	if q.quotesCount < 0 {
+		count,err := MongoHelper.QuotesCollection.CountDocuments(MongoHelper.Context,bson.D{},nil)
+		if err != nil {
+			log.Fatal("failed to get quotes count: ",err)
+		}
+		q.quotesCount = int(count)
+	}
+	return q.quotesCount
 }
 
 func findLongestQuoteAndAuthor(quotes []models.Quote) (string,string) {
@@ -55,7 +69,7 @@ func rebuildQuoteCollection(quotes []models.Quote) {
 }
 
 func readQuoteFile(filename string) []models.Quote {
-	quotes := []models.Quote{}
+	var quotes []models.Quote
 
 	f, err := os.Open(filename)
 
@@ -65,13 +79,13 @@ func readQuoteFile(filename string) []models.Quote {
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
+	for i:= 1;scanner.Scan();i++ {
 		line := scanner.Text()
 		split := strings.Split(line, "|")
 		if len(split) != 2 {
 			panic(fmt.Sprintf("Wrong quote format, fix this before continuing %v\n", line))
 		} else {
-			quote := models.Quote{primitive.NewObjectID(), formatQuote(split[0]), strings.TrimSpace(split[1])}
+			quote := models.Quote{ID: primitive.NewObjectID(), QuoteID: i, Message: formatQuote(split[0]), Author: strings.TrimSpace(split[1])}
 			quotes = append(quotes, quote)
 		}
 	}

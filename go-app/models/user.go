@@ -13,9 +13,9 @@ type User struct {
 }
 
 type LoginResult struct {
-	UserId string	`json:"userId"`
-	Success bool 	`json:"success"`
-	Error string	`json:"error"`
+	UserID  string `json:"userID"`
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
 }
 
 type RegisterResult struct {

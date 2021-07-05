@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v3"
 	"os"
 	"path/filepath"
@@ -23,13 +24,24 @@ type Config struct {
 }
 
 func Get() Config {
-	projetDir,err := filepath.Abs("./")
-	if err != nil {
-		panic(err)
+
+	var err error
+
+	if val, err := testFunc(); err != nil{
+		fmt.Println(val)
 	}
-	f, err := os.Open(projetDir+"/config/config.yaml")
+
+
+	wd, err := os.Getwd()
 	if err != nil {
-		panic(err)
+		panic("fail to find wd: "+err.Error())
+	}
+
+	configPath := filepath.Join(wd,"config/config.yaml")
+
+	f, err := os.Open(configPath)
+	if err != nil {
+		panic("failed to open config file: "+err.Error())
 	}
 	defer f.Close()
 
@@ -41,4 +53,8 @@ func Get() Config {
 	}
 
 	return cfg
+}
+
+func testFunc() (string, error) {
+	return "",nil
 }

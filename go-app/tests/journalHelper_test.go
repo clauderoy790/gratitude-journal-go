@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"fmt"
 	"gitlab.com/claude.roy790/gratitude-journal/helpers"
 	"gitlab.com/claude.roy790/gratitude-journal/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -10,7 +9,7 @@ import (
 )
 
 var today = time.Now().Format("01-02-2006")
-var testEntry models.JournalEntry = models.JournalEntry{
+var testEntry = models.JournalEntry{
 	Date: 			today,
 	Grateful1:      "test1",
 	Grateful2:      "test2",
@@ -30,6 +29,7 @@ var testEntry models.JournalEntry = models.JournalEntry{
 func TestDeleteEntry(t *testing.T) {
 	helpers.MongoHelper.Connect()
 	defer helpers.MongoHelper.Disconnect()
+
 	jh := helpers.JournalHelper
 	uh := helpers.UserHelper
 	uh.Register(email, password, password)
@@ -54,7 +54,6 @@ func TestWriteEntry(t *testing.T) {
 	uh := helpers.UserHelper
 	uh.Register(email, password, password)
 	user, _ := uh.GetUser(email)
-	fmt.Println("user id: ",user.ID)
 	jh.DeleteEntry(user.ID.Hex(), today)
 	if err := jh.WriteEntry(user.ID.Hex(), today, testEntry); err != nil {
 		t.Fatalf("failed to write new entry: %v", err)
@@ -65,7 +64,7 @@ func TestWriteEntry(t *testing.T) {
 		t.Fatalf("failed to get a freshly created entry %v",res.Error)
 	}
 	if res.Entry.UserID == "" || res.Entry.UserID == primitive.NilObjectID.Hex() {
-		t.Fatalf("invalied userId in freshly creaty entry")
+		t.Fatalf("invalied userID in freshly creaty entry")
 	}
 
 	jh.DeleteEntry(user.ID.Hex(), today)
@@ -74,6 +73,7 @@ func TestWriteEntry(t *testing.T) {
 func TestReadEntry(t *testing.T) {
 	helpers.MongoHelper.Connect()
 	defer helpers.MongoHelper.Disconnect()
+
 	jh := helpers.JournalHelper
 	uh := helpers.UserHelper
 	uh.Register(email, password, password)
@@ -85,9 +85,10 @@ func TestReadEntry(t *testing.T) {
 	}
 
 	testEntry.UserID = user.ID.Hex()
+	testEntry.Quote = res.Entry.Quote //Quote is generated while writing an entry
 	res.Entry.ID = testEntry.ID
 	if res.Entry != testEntry{
-		t.Fatalf("get entry returned different content from inserted entry e1: %v, e2: %v",res.Entry, testEntry)
+		t.Fatalf("get entry returned different content from inserted entry e1: \n\n%v\n\n, e2: \n\n%v\n\n",res.Entry, testEntry)
 	}
 
 	jh.DeleteEntry(user.ID.Hex(), today)
@@ -96,6 +97,7 @@ func TestReadEntry(t *testing.T) {
 func TestUpdateEntry(t *testing.T) {
 	helpers.MongoHelper.Connect()
 	defer helpers.MongoHelper.Disconnect()
+
 	jh := helpers.JournalHelper
 	uh := helpers.UserHelper
 	uh.Register(email, password, password)

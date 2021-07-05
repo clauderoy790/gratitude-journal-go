@@ -21,6 +21,7 @@ type JournalEntry struct {
 	HappenedGreat3	string				`bson:"happenedGreat3,omitempty"`
 	Better1			string				`bson:"better1,omitempty"`
 	Better2			string				`bson:"better2,omitempty"`
+	Quote 			Quote				`bson:"quote,omitempty"`
 }
 
 type JournalEntryResult struct {
