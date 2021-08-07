@@ -6,9 +6,10 @@ import (
 	"github.com/clauderoy790/gratitude-journal/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 )
 
-var isLocalhost = true
+var useLocalhost = true
 var client *mongo.Client
 var Context context.Context
 var MongoHelper MongoHelp = MongoHelp{}
@@ -24,11 +25,10 @@ type MongoHelp struct {
 func (MongoHelp) Connect() {
 	var err error
 	cfg := config.Get()
-	cfg.UseLocalhost = isLocalhost
 	MongoHelper.Context = context.TODO()
-	client, err = mongo.Connect(Context, options.Client().ApplyURI(getConnString(cfg)))
+	client, err = mongo.Connect(Context, options.Client().ApplyURI(getConnString(&cfg)))
 	if err != nil {
-		panic(err)
+		log.Fatalln("error connecting to the mongo client: ", err)
 	}
 	MongoHelper.Db = client.Database(cfg.Database.Name)
 	MongoHelper.QuotesCollection = MongoHelper.Db.Collection("quotes")
@@ -36,8 +36,8 @@ func (MongoHelp) Connect() {
 	MongoHelper.JournalEntriesCollection = MongoHelper.Db.Collection("journalEntries")
 }
 
-func getConnString(cfg config.Config) string {
-	if cfg.UseLocalhost {
+func getConnString(cfg *config.Config) string {
+	if useLocalhost {
 		return "mongodb://localhost:27017"
 	}
 	return fmt.Sprintf("mongodb+srv://%v:%v@%v/%v?retryWrites=true&w=majority", cfg.Database.User, cfg.Database.Password, cfg.Database.Cluster, cfg.Database.Name)

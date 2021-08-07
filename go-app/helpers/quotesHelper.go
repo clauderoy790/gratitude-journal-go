@@ -16,43 +16,24 @@ var quotes []models.Quote
 var quoteFile = "quotes.txt"
 var QuotesHelper QuotesHelp = QuotesHelp{-1}
 
-type QuotesHelp struct{
+type QuotesHelp struct {
 	quotesCount int
 }
 
 func (q *QuotesHelp) RefreshQuotes() {
 	quotes = readQuoteFile(quoteFile)
 	rebuildQuoteCollection(quotes)
-	quote,author := findLongestQuoteAndAuthor(quotes)
-	fmt.Println("longest quote is: ",quote)
-	fmt.Println("longest author is: ",author)
 }
 
-func (q *QuotesHelp)  QuotesCount() int {
+func (q *QuotesHelp) QuotesCount() int {
 	if q.quotesCount < 0 {
-		count,err := MongoHelper.QuotesCollection.CountDocuments(MongoHelper.Context,bson.D{},nil)
+		count, err := MongoHelper.QuotesCollection.CountDocuments(MongoHelper.Context, bson.D{}, nil)
 		if err != nil {
-			log.Fatal("failed to get quotes count: ",err)
+			log.Fatal("failed to get quotes count: ", err)
 		}
 		q.quotesCount = int(count)
 	}
 	return q.quotesCount
-}
-
-func findLongestQuoteAndAuthor(quotes []models.Quote) (string,string) {
-	author:= ""
-	message := ""
-	for _,quote := range quotes {
-		if len(quote.Message) > len(message) {
-			message = quote.Message
-		}
-
-		if len(quote.Author) > len(author) {
-			author = quote.Author
-		}
-	}
-
-	return message,author
 }
 
 func rebuildQuoteCollection(quotes []models.Quote) {
@@ -64,7 +45,10 @@ func rebuildQuoteCollection(quotes []models.Quote) {
 	}
 
 	for _, q := range quotes {
-		MongoHelper.QuotesCollection.InsertOne(MongoHelper.Context, q)
+		_, err = MongoHelper.QuotesCollection.InsertOne(MongoHelper.Context, q)
+		if err != nil {
+			log.Fatal()
+		}
 	}
 }
 
@@ -72,18 +56,18 @@ func readQuoteFile(filename string) []models.Quote {
 	var quotes []models.Quote
 
 	f, err := os.Open(filename)
+	defer f.Close()
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
-	for i:= 1;scanner.Scan();i++ {
+	for i := 1; scanner.Scan(); i++ {
 		line := scanner.Text()
 		split := strings.Split(line, "|")
 		if len(split) != 2 {
-			panic(fmt.Sprintf("Wrong quote format, fix this before continuing %v\n", line))
+			log.Fatalf("Wrong quote format, fix this before continuing %v\n", line)
 		} else {
 			quote := models.Quote{ID: primitive.NewObjectID(), QuoteID: i, Message: formatQuote(split[0]), Author: strings.TrimSpace(split[1])}
 			quotes = append(quotes, quote)
