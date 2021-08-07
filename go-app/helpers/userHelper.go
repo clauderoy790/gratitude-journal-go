@@ -2,8 +2,8 @@ package helpers
 
 import (
 	"fmt"
-	"gitlab.com/claude.roy790/gratitude-journal/config"
-	"gitlab.com/claude.roy790/gratitude-journal/models"
+	"github.com/clauderoy790/gratitude-journal/config"
+	"github.com/clauderoy790/gratitude-journal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"

@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"gitlab.com/claude.roy790/gratitude-journal/helpers"
-	"gitlab.com/claude.roy790/gratitude-journal/models"
+	"github.com/clauderoy790/gratitude-journal/helpers"
+	"github.com/clauderoy790/gratitude-journal/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"testing"
 	"time"

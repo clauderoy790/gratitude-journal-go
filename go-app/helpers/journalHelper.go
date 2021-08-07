@@ -1,8 +1,8 @@
 package helpers
 
 import (
-	"gitlab.com/claude.roy790/gratitude-journal/config"
-	"gitlab.com/claude.roy790/gratitude-journal/models"
+	"github.com/clauderoy790/gratitude-journal/config"
+	"github.com/clauderoy790/gratitude-journal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,7 +20,7 @@ func (JournalHelp) WriteEntry(userID ,date string, entry models.JournalEntry)  (
 	if res.Error == "" && res.Entry.ID != primitive.NilObjectID {
 		_, err = MongoHelper.JournalEntriesCollection.ReplaceOne(MongoHelper.Context,res.Entry,entry)
 	} else if res.Error == config.Get().Messages.NoEntryFound {
-		quote, err := QuoteGenerator.GenerateQuote(userID,date)
+		quote, err := QuoteGenerator.GetRandomQuote(userID,date)
 		if err == nil {
 			entry.Quote = quote
 			_,err = MongoHelper.JournalEntriesCollection.InsertOne(MongoHelper.Context,entry)

@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"gitlab.com/claude.roy790/gratitude-journal/models"
+	"github.com/clauderoy790/gratitude-journal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"math/rand"
@@ -13,7 +13,7 @@ var QuoteGenerator QuoteGen = QuoteGen{}
 
 type QuoteGen struct {}
 
-func (*QuoteGen) GenerateQuote(userID, date string) (quote models.Quote, err  error) {
+func (*QuoteGen) GetRandomQuote(userID, date string) (quote models.Quote, err  error) {
 	mixedId, err := combineToStr(userID,date,7)
 
 	if err != nil {
