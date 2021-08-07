@@ -5,8 +5,6 @@ import (
 	"net/http"
 )
 
-type M map[string]interface{}
-
 func WriteJson(w http.ResponseWriter, val interface{}) {
 	data, err := json.Marshal(val)
 	if err != nil {
