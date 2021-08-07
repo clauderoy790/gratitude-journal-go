@@ -3,7 +3,7 @@ package helpers
 import (
 	"bufio"
 	"fmt"
-	"gitlab.com/claude.roy790/gratitude-journal/models"
+	"github.com/clauderoy790/gratitude-journal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"

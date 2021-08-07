@@ -10,38 +10,32 @@ import (
 type Config struct {
 	App struct {
 		MinPasswordLength int `yaml:"minPasswordLength"`
-		Port int `yaml:"port"`
+		Port              int `yaml:"port"`
 	} `yaml:"app"`
 	Database struct {
-		Name string `yaml:"name"`
-		Cluster string `yaml:"cluster"`
-		User string `yaml:"user"`
+		Name     string `yaml:"name"`
+		Cluster  string `yaml:"cluster"`
+		User     string `yaml:"user"`
 		Password string `yaml:"password"`
 	} `yaml:"database"`
 	Messages struct {
 		NoEntryFound string `yaml:"noEntryFound"`
 	} `yaml:"messages"`
+	UseLocalhost bool
 }
 
 func Get() Config {
-
-	var err error
-
-	if val, err := testFunc(); err != nil{
-		fmt.Println(val)
-	}
-
-
 	wd, err := os.Getwd()
+	fmt.Println("wd: ", wd)
 	if err != nil {
-		panic("fail to find wd: "+err.Error())
+		panic("fail to find wd: " + err.Error())
 	}
 
-	configPath := filepath.Join(wd,"config/config.yaml")
+	configPath := filepath.Join(wd, "config/config.yaml")
 
 	f, err := os.Open(configPath)
 	if err != nil {
-		panic("failed to open config file: "+err.Error())
+		panic("failed to open config file: " + err.Error())
 	}
 	defer f.Close()
 
@@ -53,8 +47,4 @@ func Get() Config {
 	}
 
 	return cfg
-}
-
-func testFunc() (string, error) {
-	return "",nil
 }
