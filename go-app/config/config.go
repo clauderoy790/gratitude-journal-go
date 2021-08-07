@@ -1,10 +1,12 @@
 package config
 
 import (
-	"fmt"
 	"gopkg.in/yaml.v3"
+	"log"
 	"os"
 	"path/filepath"
+	"runtime"
+	"strings"
 )
 
 type Config struct {
@@ -21,21 +23,13 @@ type Config struct {
 	Messages struct {
 		NoEntryFound string `yaml:"noEntryFound"`
 	} `yaml:"messages"`
-	UseLocalhost bool
 }
 
 func Get() Config {
-	wd, err := os.Getwd()
-	fmt.Println("wd: ", wd)
+	_, filename, _, _ := runtime.Caller(0)
+	f, err := os.Open(strings.ReplaceAll(filename, filepath.Ext(filename), ".yaml"))
 	if err != nil {
-		panic("fail to find wd: " + err.Error())
-	}
-
-	configPath := filepath.Join(wd, "config/config.yaml")
-
-	f, err := os.Open(configPath)
-	if err != nil {
-		panic("failed to open config file: " + err.Error())
+		log.Fatalln("failed to open config file: " + err.Error())
 	}
 	defer f.Close()
 
