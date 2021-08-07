@@ -2,6 +2,8 @@ package server
 
 import "net/http"
 
-func (server *Server) homeHandler(writer http.ResponseWriter, request *http.Request) {
-
+func (s *Server) homeHandler(writer http.ResponseWriter, request *http.Request) {
+	//http_helper.WriteJson(writer, M{
+	//	"message": "salut",
+	//})
 }
