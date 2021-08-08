@@ -7,11 +7,11 @@ import (
 )
 
 func (s *Server) loginHandler(writer http.ResponseWriter, request *http.Request) {
-	params, err := http_helper.GetQueryParams(request)
+	params, err := http_helper.ProcessJsonBody(request)
 	if err != nil {
 		http_helper.WriteError(writer, err, http.StatusBadRequest)
 		return
 	}
-	logRes := helpers.UserHelper.Login(params["email"], params["password"])
+	logRes := helpers.UserHelper.Login(params["email"].(string), params["password"].(string))
 	http_helper.WriteJson(writer, logRes)
 }
