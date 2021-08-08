@@ -39,3 +39,14 @@ func GetQueryParams(r *http.Request) (map[string]string, error) {
 	}
 	return m, nil
 }
+
+func ProcessJsonBody(r *http.Request) (map[string]string, error) {
+	m := make(map[string]string)
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+	err := decoder.Decode(&m)
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
+}

@@ -8,13 +8,13 @@ import (
 )
 
 func (s *Server) journalFetchHandler(writer http.ResponseWriter, request *http.Request) {
-	params, err := http_helper.GetQueryParams(request)
+	params, err := http_helper.ProcessJsonBody(request)
 	if err != nil {
 		http_helper.WriteError(writer, err, http.StatusBadRequest)
 		return
 	}
-	userID := params["userID"]
-	date := params["date"]
+	userID := params["userID"].(string)
+	date := params["date"].(string)
 
 	if userID == "" || date == "" {
 		http_helper.WriteError(writer, errors.New("must provide userID and date"), http.StatusBadRequest)
