@@ -5,13 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d8a7467-fa13-4b13-9345-7b6b8c55ca86" name="Changes" comment="GJG-1: Change web framework from Gin to Mux">
-      <change beforePath="$PROJECT_DIR$/go-app/helpers/journalHelper.go" beforeDir="false" afterPath="$PROJECT_DIR$/go-app/helpers/journalHelper.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go-app/http-helper/http_helper.go" beforeDir="false" afterPath="$PROJECT_DIR$/go-app/http-helper/http_helper.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go-app/models/journal.go" beforeDir="false" afterPath="$PROJECT_DIR$/go-app/models/journal.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go-app/server/handler_journal_fetch.go" beforeDir="false" afterPath="$PROJECT_DIR$/go-app/server/handler_journal_fetch.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go-app/server/handler_journal_update.go" beforeDir="false" afterPath="$PROJECT_DIR$/go-app/server/handler_journal_update.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go-app/server/handler_login.go" beforeDir="false" afterPath="$PROJECT_DIR$/go-app/server/handler_login.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go-app/server/handler_register.go" beforeDir="false" afterPath="$PROJECT_DIR$/go-app/server/handler_register.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +23,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="task/GJG-1/change-gin-for-mux" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -179,20 +173,10 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="GJG-1: start replacing Gin with Gorilla/mux" />
     <MESSAGE value="GJG-1: Change web framework from Gin to Mux" />
-    <option name="LAST_COMMIT_MESSAGE" value="GJG-1: Change web framework from Gin to Mux" />
+    <MESSAGE value="GJG-1: this is a test" />
+    <option name="LAST_COMMIT_MESSAGE" value="GJG-1: this is a test" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/go-app/helpers/userHelper.go</url>
-          <line>19</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
