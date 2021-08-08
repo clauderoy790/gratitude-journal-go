@@ -12,6 +12,6 @@ func (s *Server) loginHandler(writer http.ResponseWriter, request *http.Request)
 		http_helper.WriteError(writer, err, http.StatusBadRequest)
 		return
 	}
-	logRes := helpers.UserHelper.Login(params["email"].(string), params["password"].(string))
+	logRes := helpers.UserHelper.Login(params["email"], params["password"])
 	http_helper.WriteJson(writer, logRes)
 }

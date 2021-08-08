@@ -12,40 +12,40 @@ var JournalHelper = JournalHelp{}
 
 type JournalHelp struct{}
 
-func (JournalHelp) WriteEntry(userID ,date string, entry models.JournalEntry)  (err error) {
+func (JournalHelp) WriteEntry(userID, date string, entry models.JournalEntry) (err error) {
 	entry.UserID = userID
 	entry.Date = date
 
-	res := JournalHelper.GetEntry(userID,date)
+	res := JournalHelper.GetEntry(userID, date)
 	if res.Error == "" && res.Entry.ID != primitive.NilObjectID {
-		_, err = MongoHelper.JournalEntriesCollection.ReplaceOne(MongoHelper.Context,res.Entry,entry)
+		_, err = MongoHelper.JournalEntriesCollection.ReplaceOne(MongoHelper.Context, res.Entry, entry)
 	} else if res.Error == config.Get().Messages.NoEntryFound {
-		quote, err := QuoteGenerator.GetRandomQuote(userID,date)
+		quote, err := QuoteGenerator.GetRandomQuote(userID, date)
 		if err == nil {
 			entry.Quote = quote
-			_,err = MongoHelper.JournalEntriesCollection.InsertOne(MongoHelper.Context,entry)
+			_, err = MongoHelper.JournalEntriesCollection.InsertOne(MongoHelper.Context, entry)
 		}
 	}
 	return err
 }
 
-func (JournalHelp) GetEntry(userID,date string) models.JournalEntryResult{
+func (JournalHelp) GetEntry(userID, date string) models.JournalEntryResponse {
 	entry := models.JournalEntry{}
-	err := MongoHelper.JournalEntriesCollection.FindOne(MongoHelper.Context, bson.D{{Key:"userID", Value:userID},{Key:"date",Value:date}}).Decode(&entry)
+	err := MongoHelper.JournalEntriesCollection.FindOne(MongoHelper.Context, bson.D{{Key: "userID", Value: userID}, {Key: "date", Value: date}}).Decode(&entry)
 
-	if  err == mongo.ErrNoDocuments {
-		return models.JournalEntryResult{Entry:models.JournalEntry{},Error:config.Get().Messages.NoEntryFound}
-	} else if  err != nil {
-		return models.JournalEntryResult{Entry: models.JournalEntry{}, Error:"A server error occurred, try again later."}
+	if err == mongo.ErrNoDocuments {
+		return models.JournalEntryResponse{Entry: models.JournalEntry{}, Error: config.Get().Messages.NoEntryFound}
+	} else if err != nil {
+		return models.JournalEntryResponse{Entry: models.JournalEntry{}, Error: "A server error occurred, try again later."}
 	}
-	return models.JournalEntryResult{Entry: entry}
+	return models.JournalEntryResponse{Entry: entry}
 }
 
-func (JournalHelp) DeleteEntry(userID,date string) error {
-	res := JournalHelper.GetEntry(userID,date)
+func (JournalHelp) DeleteEntry(userID, date string) error {
+	res := JournalHelper.GetEntry(userID, date)
 	var err error
 	if res.Error == "" && res.Entry.ID != primitive.NilObjectID {
-		_,err = MongoHelper.JournalEntriesCollection.DeleteOne(MongoHelper.Context,bson.D{{"userID", userID},{"date",date}})
+		_, err = MongoHelper.JournalEntriesCollection.DeleteOne(MongoHelper.Context, bson.D{{"userID", userID}, {"date", date}})
 	}
 	return err
 }
