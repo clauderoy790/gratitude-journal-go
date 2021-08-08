@@ -2,6 +2,9 @@ package http_helper
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
+	"log"
 	"net/http"
 )
 
@@ -9,44 +12,48 @@ func WriteJson(w http.ResponseWriter, val interface{}) {
 	data, err := json.Marshal(val)
 	if err != nil {
 		WriteError(w, err, http.StatusInternalServerError)
-		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(data)
+	_, _ = w.Write(data)
 }
 
 func WriteError(w http.ResponseWriter, err error, errorStatusCode int) {
 	http.Error(w, err.Error(), errorStatusCode)
 }
 
-func GetQueryParams(r *http.Request) (map[string]string, error) {
-	var values map[string][]string
-	m := make(map[string]string)
-	switch r.Method {
-	case http.MethodGet:
-		values = r.URL.Query()
-	case http.MethodPut, http.MethodPost, http.MethodPatch:
-		err := r.ParseForm()
-		if err != nil {
-			return nil, err
-		}
-		values = r.PostForm
-	}
-	for k, v := range values {
-		m[k] = v[0]
-	}
-	return m, nil
-}
-
 func ProcessJsonBody(r *http.Request) (map[string]string, error) {
-	m := make(map[string]string)
+	m := make(map[string]interface{})
 	decoder := json.NewDecoder(r.Body)
-	defer r.Body.Close()
+	defer dclose(r.Body)
 	err := decoder.Decode(&m)
 	if err != nil {
 		return nil, err
 	}
-	return m, nil
+	result, err := toMapStringString(m)
+	return result, err
+}
+
+func toMapStringString(m map[string]interface{}) (map[string]string, error) {
+	res := make(map[string]string)
+
+	for k, v := range m {
+		if val, ok := v.(map[string]interface{}); ok {
+			bytes, err := json.Marshal(val)
+			if err != nil {
+				return nil, err
+			}
+			res[k] = string(bytes)
+		} else {
+			res[k] = fmt.Sprintf("%v", v)
+		}
+	}
+	return res, nil
+}
+
+func dclose(c io.Closer) {
+	if err := c.Close(); err != nil {
+		log.Println(err)
+	}
 }

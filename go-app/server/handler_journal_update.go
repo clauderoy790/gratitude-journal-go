@@ -28,10 +28,10 @@ func (s *Server) journalUpdateHandler(writer http.ResponseWriter, request *http.
 	if err != nil {
 		http_helper.WriteError(writer, errors.New("entry is not in a valid format"), http.StatusBadRequest)
 	} else {
-		if err := helpers.JournalHelper.WriteEntry(userID, date, entry); err != nil {
+		if err := helpers.JournalHelper.WriteEntry(userID, date, jEntry); err != nil {
 			http_helper.WriteError(writer, err, http.StatusInternalServerError)
 		} else {
-			http_helper.WriteJson(writer, entry)
+			http_helper.WriteJson(writer, jEntry)
 		}
 	}
 }
