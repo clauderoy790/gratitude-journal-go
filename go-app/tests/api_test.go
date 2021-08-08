@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/clauderoy790/gratitude-journal/server"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
+	"time"
 )
 
 var baseTestUrl = "http://localhost:8080/"
@@ -22,6 +24,7 @@ func (s *ApiSuite) SetupSuite() {
 		server := server.New(context.Background())
 		server.Start()
 	}()
+	time.Sleep(150 * time.Millisecond)
 	s.client = http.Client{}
 }
 
@@ -31,12 +34,16 @@ func (s *ApiSuite) TearDownSuite() {
 
 func (s *ApiSuite) TestHome() {
 	res, err := DoTestRequest(s, baseTestUrl, http.MethodGet, "", http.Header{})
-	s.NoError(err, "Got an error in /: %v", err)
+	s.NoError(err, "Got an error in home: %v", err)
+	if err != nil {
+		fmt.Println("error in request: ", err)
+		return
+	}
+	defer res.Body.Close()
 
-	m := make(map[string]string)
+	m := make(server.M)
 	json.NewDecoder(res.Body).Decode(&m)
-
-	exp := map[string]string{"message": ""}
+	exp := server.M{"message": "welcome to daily gratitude"}
 	s.Equalf(exp, m, "home response error, expected %v, got %\n", exp, m)
 }
 
