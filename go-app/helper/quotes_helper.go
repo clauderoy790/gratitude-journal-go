@@ -1,15 +1,16 @@
-package helpers
+package helper
 
 import (
 	"bufio"
 	"fmt"
-	"github.com/clauderoy790/gratitude-journal/models"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"os"
 	"strings"
 	"unicode"
+
+	"github.com/clauderoy790/gratitude-journal/models"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var quotes []models.Quote

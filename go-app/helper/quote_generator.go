@@ -1,20 +1,21 @@
-package helpers
+package helper
 
 import (
-	"github.com/clauderoy790/gratitude-journal/models"
-	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"math/rand"
 	"regexp"
 	"strconv"
+
+	"github.com/clauderoy790/gratitude-journal/models"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var QuoteGenerator QuoteGen = QuoteGen{}
 
-type QuoteGen struct {}
+type QuoteGen struct{}
 
-func (*QuoteGen) GetRandomQuote(userID, date string) (quote models.Quote, err  error) {
-	mixedId, err := combineToStr(userID,date,7)
+func (*QuoteGen) GetRandomQuote(userID, date string) (quote models.Quote, err error) {
+	mixedId, err := combineToStr(userID, date, 7)
 
 	if err != nil {
 		log.Fatal(err)
@@ -22,15 +23,15 @@ func (*QuoteGen) GetRandomQuote(userID, date string) (quote models.Quote, err  e
 	s1 := rand.NewSource(int64(mixedId))
 	r1 := rand.New(s1)
 	randNb := r1.Intn(int(QuotesHelper.QuotesCount())) + 1
-	err = MongoHelper.QuotesCollection.FindOne(MongoHelper.Context, bson.D{{"quoteID",randNb}}).Decode(&quote)
+	err = MongoHelper.QuotesCollection.FindOne(MongoHelper.Context, bson.D{{"quoteID", randNb}}).Decode(&quote)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return quote,err
+	return quote, err
 }
 
-func combineToStr(id,date string,maxLen int) (nb int, err error) {
+func combineToStr(id, date string, maxLen int) (nb int, err error) {
 
 	// Make a Regex to say we only want numbers
 	reg, err := regexp.Compile("[^0-9]+")
@@ -39,8 +40,8 @@ func combineToStr(id,date string,maxLen int) (nb int, err error) {
 	}
 
 	// Remove all characters for combined Id + Date
-	idNumbers := reg.ReplaceAllString(id,"")
-	idNumbers = clamp(idNumbers,maxLen)
+	idNumbers := reg.ReplaceAllString(id, "")
+	idNumbers = clamp(idNumbers, maxLen)
 	processedString := idNumbers + reg.ReplaceAllString(date, "")
 
 	nb, err = strconv.Atoi(processedString)
@@ -55,5 +56,3 @@ func clamp(str string, max int) string {
 	}
 	return str
 }
-
-

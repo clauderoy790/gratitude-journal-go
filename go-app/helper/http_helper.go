@@ -1,4 +1,4 @@
-package http_helper
+package helper
 
 import (
 	"encoding/json"

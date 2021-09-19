@@ -22,7 +22,7 @@ type ApiSuite struct {
 func (s *ApiSuite) SetupSuite() {
 	go func() {
 		server := server.New(context.Background())
-		server.Start()
+		server.Run()
 	}()
 	time.Sleep(150 * time.Millisecond)
 	s.client = http.Client{}

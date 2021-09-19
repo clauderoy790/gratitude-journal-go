@@ -1,12 +1,13 @@
-package helpers
+package helper
 
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/clauderoy790/gratitude-journal/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 )
 
 var useLocalhost = true

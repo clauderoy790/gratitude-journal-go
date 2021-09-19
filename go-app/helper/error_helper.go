@@ -1,4 +1,4 @@
-package helpers
+package helper
 
 func GetErrorMessage(err error) string {
 	if err != nil {

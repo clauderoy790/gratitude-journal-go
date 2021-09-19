@@ -3,10 +3,11 @@ package server
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/clauderoy790/gratitude-journal/config"
 	"github.com/clauderoy790/gratitude-journal/helpers"
 	"github.com/gorilla/mux"
-	"net/http"
 )
 
 type Server struct {
@@ -31,13 +32,12 @@ func New(ctx context.Context) *Server {
 	return &server
 }
 
-func (s *Server) Start() error {
+func (s *Server) Run() error {
 	helpers.MongoHelper.Connect()
 	defer helpers.MongoHelper.Disconnect()
 
 	fmt.Printf("Server started server on port: %d\n", s.cfg.App.Port)
-	err := s.HttpServer().ListenAndServe()
-	return err
+	return s.HttpServer().ListenAndServe()
 }
 
 func (s *Server) HttpServer() *http.Server {
