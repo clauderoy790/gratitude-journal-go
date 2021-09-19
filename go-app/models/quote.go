@@ -1,16 +1,17 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"gorm.io/gorm"
+)
 
 type Quote struct {
-	ID     		primitive.ObjectID 	`bson:"_id,omitempty"`
-	QuoteID     int 				`bson:"quoteID,omitempty"`
-	Message		string             	`bson:"message,omitempty"`
-	Author 		string             	`bson:"author,omitempty"`
+	gorm.Model
+	Message string `json:"message,omitempty"`
+	Author  string `json:"author,omitempty"`
 }
 
 type QuoteResult struct {
-	Message	string             	`json:"message"`
-	Author 	string             	`json:"author"`
-	Error 	string             	`json:"error"`
+	Message string `json:"message"`
+	Author  string `json:"author"`
+	Error   string `json:"error"`
 }

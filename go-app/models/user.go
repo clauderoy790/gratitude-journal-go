@@ -1,24 +1,25 @@
 package models
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
-	ID     			primitive.ObjectID 	`bson:"_id,omitempty"`
-	Email			string             	`bson:"email,omitempty"`
-	PasswordHash	string             	`bson:"passwordHash,omitempty"`
-	DateCreated		time.Time			`bson:"dateCreated,omitempty"`
+	gorm.Model
+	Email        string    `json:"email,omitempty"`
+	PasswordHash string    `json:"passwordHash,omitempty"`
+	DateCreated  time.Time `json:"dateCreated,omitempty"`
 }
 
 type LoginResult struct {
-	UserID  string `json:"userID"`
+	UserID  string `json:"userId"`
 	Success bool   `json:"success"`
 	Error   string `json:"error"`
 }
 
 type RegisterResult struct {
-	UserID string `json:"userID"`
-	Error string  `json:"error"`
+	UserID string `json:"userId"`
+	Error  string `json:"error"`
 }
