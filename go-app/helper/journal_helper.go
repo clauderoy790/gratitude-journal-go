@@ -4,7 +4,6 @@ import (
 	"github.com/clauderoy790/gratitude-journal/config"
 	"github.com/clauderoy790/gratitude-journal/models"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -13,20 +12,22 @@ var JournalHelper = JournalHelp{}
 type JournalHelp struct{}
 
 func (JournalHelp) WriteEntry(userID, date string, entry models.JournalEntry) (err error) {
-	entry.UserID = userID
-	entry.Date = date
+	// entry.UserID = userID
+	// entry.Date = date
 
-	res := JournalHelper.GetEntry(userID, date)
-	if res.Error == "" && res.Entry.ID != primitive.NilObjectID {
-		_, err = MongoHelper.JournalEntriesCollection.ReplaceOne(MongoHelper.Context, res.Entry, entry)
-	} else if res.Error == config.Get().Messages.NoEntryFound {
-		quote, err := QuoteGenerator.GetRandomQuote(userID, date)
-		if err == nil {
-			entry.Quote = quote
-			_, err = MongoHelper.JournalEntriesCollection.InsertOne(MongoHelper.Context, entry)
-		}
-	}
-	return err
+	// res := JournalHelper.GetEntry(userID, date)
+	// if res.Error == "" && res.Entry.ID != primitive.NilObjectID {
+	// 	_, err = MongoHelper.JournalEntriesCollection.ReplaceOne(MongoHelper.Context, res.Entry, entry)
+	// } else if res.Error == config.Get().Messages.NoEntryFound {
+	// 	quote, err := QuoteGenerator.GetRandomQuote(userID, date)
+	// 	if err == nil {
+	// 		entry.Quote = quote
+	// 		_, err = MongoHelper.JournalEntriesCollection.InsertOne(MongoHelper.Context, entry)
+	// 	}
+	// }
+	// return err
+	//todo here
+	return nil
 }
 
 func (JournalHelp) GetEntry(userID, date string) models.JournalEntryResponse {
@@ -42,10 +43,12 @@ func (JournalHelp) GetEntry(userID, date string) models.JournalEntryResponse {
 }
 
 func (JournalHelp) DeleteEntry(userID, date string) error {
-	res := JournalHelper.GetEntry(userID, date)
-	var err error
-	if res.Error == "" && res.Entry.ID != primitive.NilObjectID {
-		_, err = MongoHelper.JournalEntriesCollection.DeleteOne(MongoHelper.Context, bson.D{{"userID", userID}, {"date", date}})
-	}
-	return err
+	// res := JournalHelper.GetEntry(userID, date)
+	// var err error
+	// if res.Error == "" && res.Entry.ID != primitive.NilObjectID {
+	// 	_, err = MongoHelper.JournalEntriesCollection.DeleteOne(MongoHelper.Context, bson.D{{"userID", userID}, {"date", date}})
+	// }
+	// return err
+	//todo here
+	return nil
 }

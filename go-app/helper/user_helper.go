@@ -1,15 +1,12 @@
 package helper
 
 import (
-	"fmt"
 	"net/mail"
 	"time"
 
-	"github.com/clauderoy790/gratitude-journal/config"
 	"github.com/clauderoy790/gratitude-journal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -18,19 +15,19 @@ var UserHelper = UserHelp{}
 type UserHelp struct{}
 
 func (UserHelp) Register(email, password, verifiedPassword string) models.RegisterResult {
-	if !isValidEmail(email) {
-		return models.RegisterResult{"","Email must be valid."}
-	}
-	if len(password) < config.Get().App.MinPasswordLength {
-		return models.RegisterResult{UserID:"",Error:fmt.Sprintf("Password must be at least %v characters.",config.Get().App.MinPasswordLength)}
-	}
-	if password != verifiedPassword {
-		return models.RegisterResult{"","Passwords are not identical."}
-	}
-	if user, _ := UserHelper.GetUser(email); user.ID != primitive.NilObjectID {
-		return models.RegisterResult{UserID:"",Error:email + " is already registered"}
-	}
-
+	// if !isValidEmail(email) {
+	// 	return models.RegisterResult{"","Email must be valid."}
+	// }
+	// if len(password) < config.Get().App.MinPasswordLength {
+	// 	return models.RegisterResult{UserID:"",Error:fmt.Sprintf("Password must be at least %v characters.",config.Get().App.MinPasswordLength)}
+	// }
+	// if password != verifiedPassword {
+	// 	return models.RegisterResult{"","Passwords are not identical."}
+	// }
+	// if user, _ := UserHelper.GetUser(email); user.ID != primitive.NilObjectID {
+	// 	return models.RegisterResult{UserID:"",Error:email + " is already registered"}
+	// }
+	//todo here
 	return registerUser(email, password)
 }
 
@@ -54,7 +51,7 @@ func registerUser(email, password string) models.RegisterResult {
 
 	hashed, err = hashPass(password)
 	if err != nil {
-		return models.RegisterResult{"",GetErrorMessage(err)}
+		return models.RegisterResult{"", GetErrorMessage(err)}
 	}
 
 	user := models.User{
@@ -66,10 +63,10 @@ func registerUser(email, password string) models.RegisterResult {
 	insertedId, ok := res.InsertedID.(primitive.ObjectID)
 
 	if err != nil || !ok {
-			return models.RegisterResult{"","A server error occurred, try again later"}
+		return models.RegisterResult{"", "A server error occurred, try again later"}
 	}
 
-	return models.RegisterResult{UserID:insertedId.Hex(), Error:GetErrorMessage(err)}
+	return models.RegisterResult{UserID: insertedId.Hex(), Error: GetErrorMessage(err)}
 }
 
 func hashPass(password string) (string, error) {
@@ -82,34 +79,37 @@ func hashPass(password string) (string, error) {
 }
 
 func (UserHelp) Login(email, password string) models.LoginResult {
-	var err error
-	var user models.User
+	// var err error
+	// var user models.User
 
-	user, err = UserHelper.GetUser(email)
-	if err == mongo.ErrNoDocuments {
-		return models.LoginResult{"", false, "This user is not registered."}
-	} else if err != nil {
-		fmt.Println("error: ",err)
-		return  models.LoginResult{Error:"A server error occurred, try again later."}
-	}
+	// user, err = UserHelper.GetUser(email)
+	// if err == mongo.ErrNoDocuments {
+	// 	return models.LoginResult{"", false, "This user is not registered."}
+	// } else if err != nil {
+	// 	fmt.Println("error: ", err)
+	// 	return models.LoginResult{Error: "A server error occurred, try again later."}
+	// }
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
-	if err != nil {
-		return  models.LoginResult{"", false, "Password is not valid"}
-	}
+	// err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
+	// if err != nil {
+	// 	return models.LoginResult{"", false, "Password is not valid"}
+	// }
 
-	return models.LoginResult{UserID: user.ID.Hex(), Success:true}
+	return models.LoginResult{}
+	//return models.LoginResult{UserID: user.ID.Hex(), Success: true}
+	//todo here
 }
 
-func (UserHelp) DeleteUser(email string) (bool,error) {
-	if user, err := UserHelper.GetUser(email);err != nil {
-		return false,err
-	} else if user.ID != primitive.NilObjectID {
-		res, err := MongoHelper.UsersCollection.DeleteOne(MongoHelper.Context,user)
-		if err != nil {
-			return false,err
-		}
-		return res.DeletedCount == 1,err
-	}
-	return false,nil
+func (UserHelp) DeleteUser(email string) (bool, error) {
+	// if user, err := UserHelper.GetUser(email); err != nil {
+	// 	return false, err
+	// } else if user.ID != primitive.NilObjectID {
+	// 	res, err := MongoHelper.UsersCollection.DeleteOne(MongoHelper.Context, user)
+	// 	if err != nil {
+	// 		return false, err
+	// 	}
+	// 	return res.DeletedCount == 1, err
+	// }
+	//todo here
+	return false, nil
 }

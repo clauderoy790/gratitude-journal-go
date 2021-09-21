@@ -21,7 +21,8 @@ type JournalEntry struct {
 	HappenedGreat3 string `json:"happenedGreat3,omitempty"`
 	Better1        string `json:"better1,omitempty"`
 	Better2        string `json:"better2,omitempty"`
-	Quote          Quote  `json:"quote,omitempty"`
+	QuoteID        uint
+	Quote          Quote `json:"quote,omitempty"`
 }
 
 type JournalEntryResponse struct {

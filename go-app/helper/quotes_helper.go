@@ -1,16 +1,13 @@
 package helper
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 	"unicode"
 
 	"github.com/clauderoy790/gratitude-journal/models"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var quotes []models.Quote
@@ -56,28 +53,29 @@ func rebuildQuoteCollection(quotes []models.Quote) {
 func readQuoteFile(filename string) []models.Quote {
 	var quotes []models.Quote
 
-	f, err := os.Open(filename)
-	defer f.Close()
+	//todo here
+	// f, err := os.Open(filename)
+	// defer f.Close()
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	scanner := bufio.NewScanner(f)
-	for i := 1; scanner.Scan(); i++ {
-		line := scanner.Text()
-		split := strings.Split(line, "|")
-		if len(split) != 2 {
-			log.Fatalf("Wrong quote format, fix this before continuing %v\n", line)
-		} else {
-			quote := models.Quote{ID: primitive.NewObjectID(), QuoteID: i, Message: formatQuote(split[0]), Author: strings.TrimSpace(split[1])}
-			quotes = append(quotes, quote)
-		}
-	}
+	// scanner := bufio.NewScanner(f)
+	// for i := 1; scanner.Scan(); i++ {
+	// 	line := scanner.Text()
+	// 	split := strings.Split(line, "|")
+	// 	if len(split) != 2 {
+	// 		log.Fatalf("Wrong quote format, fix this before continuing %v\n", line)
+	// 	} else {
+	// 		quote := models.Quote{ID: primitive.NewObjectID(), QuoteID: i, Message: formatQuote(split[0]), Author: strings.TrimSpace(split[1])}
+	// 		quotes = append(quotes, quote)
+	// 	}
+	// }
 
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
+	// if err := scanner.Err(); err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	return quotes
 }
