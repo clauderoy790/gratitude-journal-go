@@ -12,7 +12,7 @@ import (
 
 type Config struct {
 	Database struct {
-		name     string `yaml:"name"`
+		Name     string `yaml:"name"`
 		Host     string `yaml:"host"`
 		Port     int    `yaml:"port"`
 		User     string `yaml:"user"`

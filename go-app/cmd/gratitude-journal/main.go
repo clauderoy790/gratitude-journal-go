@@ -11,19 +11,15 @@ import (
 
 func main() {
 	cfg := config.Get()
-	db, err := connectToDatabase(cfg.Database)
+	db, err := repository.ConnectToDatabase(&cfg)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to connect to the database: %w", err))
+		panic(fmt.Sprintf("Failed to connect to the database: %v", err))
 	}
 
 	repo := repository.NewRepository(db)
-	s := server.New(context.Background(), repo)
-	err := s.Run()
+	s := server.New(context.Background(), repo, cfg)
+	err = s.Run()
 	if err != nil {
-		panic(fmt.Sprintf("Server error occured: %w", err))
+		panic(fmt.Sprintf("Server error occured: %v", err))
 	}
-}
-
-func connectToDatabase() {
-
 }

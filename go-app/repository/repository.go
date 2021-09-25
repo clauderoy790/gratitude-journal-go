@@ -1,6 +1,12 @@
 package repository
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"github.com/clauderoy790/gratitude-journal/config"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+)
 
 type Repository interface {
 	GetUser(email string) (*User, error)
@@ -16,10 +22,7 @@ type Repository interface {
 }
 
 type repository struct {
-	db    *gorm.DB
-	user  User
-	quote Quote
-	entry JournalEntry
+	db *gorm.DB
 }
 
 func NewRepository(db *gorm.DB) Repository {
@@ -27,7 +30,9 @@ func NewRepository(db *gorm.DB) Repository {
 }
 
 func (r *repository) GetUser(email string) (*User, error) {
-	r.db.Where("name = ?", "jinzhu").First(&user)
+	var user User
+	err := r.db.Where("email = ?", email).First(&user).Error
+	return &user, err
 }
 
 func (r *repository) SaveUser(user *User) error {
@@ -56,4 +61,11 @@ func (r *repository) SaveQuote(quote *Quote) error {
 
 func (r *repository) DeleteAllQuotes() error {
 	panic("not implemented") // TODO: Implement
+}
+
+func ConnectToDatabase(cfg *config.Config) (*gorm.DB, error) {
+	db := cfg.Database
+	fmt.Println("db config: ", db)
+	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=utf8&parseTime=True&loc=Local", db.User, db.Password, db.Host, db.Port, db.Name)
+	return gorm.Open(mysql.Open(dsn), &gorm.Config{})
 }

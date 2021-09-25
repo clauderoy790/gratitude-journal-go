@@ -3,14 +3,13 @@ package main
 import (
 	"fmt"
 
+	"github.com/clauderoy790/gratitude-journal/config"
 	"github.com/clauderoy790/gratitude-journal/repository"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 func main() {
-	dsn := "root:admin@tcp(127.0.0.1:3307)/daily_gratitude?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	cfg := config.Get()
+	db, err := repository.ConnectToDatabase(&cfg)
 	if err != nil {
 		fmt.Println("failed to connect to the db: ", err)
 		return
