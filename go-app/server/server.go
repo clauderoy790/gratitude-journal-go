@@ -7,6 +7,7 @@ import (
 
 	"github.com/clauderoy790/gratitude-journal/config"
 	"github.com/clauderoy790/gratitude-journal/helper"
+	"github.com/clauderoy790/gratitude-journal/repository"
 	"github.com/gorilla/mux"
 )
 
@@ -14,15 +15,17 @@ type Server struct {
 	muxRouter  *mux.Router
 	ctx        context.Context
 	cfg        config.Config
+	repo       repository.Repository
 	httpServer *http.Server
 }
 
 type M map[string]interface{}
 
-func New(ctx context.Context) *Server {
+func New(ctx context.Context, repo repository.Repository, cfg config.Config) *Server {
 	server := Server{
-		ctx: ctx,
-		cfg: config.Get(),
+		ctx:  ctx,
+		cfg:  cfg,
+		repo: repo,
 	}
 	server.setupRoutes()
 	server.httpServer = &http.Server{

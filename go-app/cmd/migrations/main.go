@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/clauderoy790/gratitude-journal/models"
+	"github.com/clauderoy790/gratitude-journal/repository"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -16,7 +16,7 @@ func main() {
 		return
 	}
 	fmt.Println("successfully connected to the db!")
-	err = db.AutoMigrate(&models.User{}, &models.Quote{}, &models.JournalEntry{})
+	err = db.AutoMigrate(&repository.User{}, &repository.Quote{}, &repository.JournalEntry{})
 	if err != nil {
 		fmt.Println("error migrating: ", err)
 		return

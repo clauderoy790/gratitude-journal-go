@@ -3,9 +3,10 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
+
 	"github.com/clauderoy790/gratitude-journal/helper"
 	"github.com/clauderoy790/gratitude-journal/models"
-	"net/http"
 )
 
 func (s *Server) journalUpdateHandler(writer http.ResponseWriter, request *http.Request) {

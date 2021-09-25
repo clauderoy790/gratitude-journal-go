@@ -1,25 +1,29 @@
 package config
 
 import (
-	"gopkg.in/yaml.v3"
 	"log"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	App struct {
-		MinPasswordLength int `yaml:"minPasswordLength"`
-		Port              int `yaml:"port"`
-	} `yaml:"app"`
 	Database struct {
-		Name     string `yaml:"name"`
-		Cluster  string `yaml:"cluster"`
+		name     string `yaml:"name"`
+		Host     string `yaml:"host"`
+		Port     int    `yaml:"port"`
 		User     string `yaml:"user"`
 		Password string `yaml:"password"`
 	} `yaml:"database"`
+	App struct {
+		MinPasswordLength int    `yaml:"minPasswordLength"`
+		Port              int    `yaml:"port"`
+		User              string `yaml:"user"`
+		Password          string `yaml:"password"`
+	} `yaml:"app"`
 	Messages struct {
 		NoEntryFound string `yaml:"noEntryFound"`
 	} `yaml:"messages"`

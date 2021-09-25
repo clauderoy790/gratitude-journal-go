@@ -1,6 +1,8 @@
-package models
+package repository
 
 import (
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -33,4 +35,34 @@ type JournalEntryRequest struct {
 	Date   string       `json:"date"`
 	UserID string       `json:"userID"`
 	Entry  JournalEntry `json:"entry"`
+}
+
+type Quote struct {
+	gorm.Model
+	Message string `json:"message,omitempty"`
+	Author  string `json:"author,omitempty"`
+}
+
+type QuoteResult struct {
+	Message string `json:"message"`
+	Author  string `json:"author"`
+	Error   string `json:"error"`
+}
+
+type User struct {
+	gorm.Model
+	Email        string    `json:"email,omitempty"`
+	PasswordHash string    `json:"passwordHash,omitempty"`
+	DateCreated  time.Time `json:"dateCreated,omitempty"`
+}
+
+type LoginResult struct {
+	UserID  string `json:"userId"`
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
+}
+
+type RegisterResult struct {
+	UserID string `json:"userId"`
+	Error  string `json:"error"`
 }
