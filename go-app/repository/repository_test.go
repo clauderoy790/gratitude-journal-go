@@ -208,20 +208,29 @@ func (suite *RepositoryTestSuite) Test_repository_SaveJournalEntry() {
 				// initialize entry data
 				tt.entry.Date = tt.date
 				tt.entry.UserID = usr.ID
-				tt.entry.Quote = tt.quote
-				err = suite.repo.SaveQuote(&tt.entry.Quote)
+				qID, err := suite.repo.SaveQuote(tt.quote.Message, tt.quote.Author)
 				suite.NoError(err)
+				tt.entry.QuoteID = qID
 
 				// Save entry
 				err = suite.repo.SaveJournalEntry(tt.entry)
+				suite.NoError(err)
+
+				// Set entry's quote
+				quote, err := suite.repo.GetQuote(qID)
+				suite.NoError(err)
+				tt.entry.Quote = quote
 				if tt.overwrite != nil {
 					tt.overwrite.Date = tt.date
 					tt.overwrite.UserID = usr.ID
-					err := suite.repo.SaveQuote(&tt.overwrite.Quote)
+					qID, err := suite.repo.SaveQuote(tt.overwriteQuote.Message, tt.overwriteQuote.Author)
 					suite.NoError(err)
-					tt.overwrite.Quote = tt.overwriteQuote
+					tt.overwrite.QuoteID = qID
 					err = suite.repo.SaveJournalEntry(tt.overwrite)
 					suite.NoError(err)
+					quote, err := suite.repo.GetQuote(qID)
+					suite.NoError(err)
+					tt.overwrite.Quote = quote
 					tt.entry = tt.overwrite
 				}
 				suite.NoError(err, "repository.SaveJournalEntry() error = %v, wantErr %v", err, tt.wantErr)
@@ -315,30 +324,30 @@ func Test_repository_GetQuotes(t *testing.T) {
 }
 
 func Test_repository_SaveQuote(t *testing.T) {
-	type fields struct {
-		db *gorm.DB
-	}
-	type args struct {
-		quote *Quote
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := &repository{
-				db: tt.fields.db,
-			}
-			if err := r.SaveQuote(tt.args.quote); (err != nil) != tt.wantErr {
-				t.Errorf("repository.SaveQuote() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+	// type fields struct {
+	// 	db *gorm.DB
+	// }
+	// type args struct {
+	// 	quote *Quote
+	// }
+	// tests := []struct {
+	// 	name    string
+	// 	fields  fields
+	// 	args    args
+	// 	wantErr bool
+	// }{
+	// 	// TODO: Add test cases.
+	// }
+	// for _, tt := range tests {
+	// t.Run(tt.name, func(t *testing.T) {
+	// 	r := &repository{
+	// 		db: tt.fields.db,
+	// 	}
+	// 	if err := r.SaveQuote(tt.args.quote); (err != nil) != tt.wantErr {
+	// 		t.Errorf("repository.SaveQuote() error = %v, wantErr %v", err, tt.wantErr)
+	// 	}
+	// })
+	// }
 }
 
 func Test_repository_DeleteAllQuotes(t *testing.T) {

@@ -20,7 +20,7 @@ type Repository interface {
 
 	QuotesCount() (int, error)
 	GetQuote(id uint) (Quote, error)
-	SaveQuote(quote *Quote) error
+	SaveQuote(message, author string) (uint, error)
 	DeleteQuote(id uint) error
 	DeleteAllQuotes() error
 }
@@ -91,8 +91,16 @@ func (r *repository) GetQuotes() ([]Quote, error) {
 	return quotes, err
 }
 
-func (r *repository) SaveQuote(quote *Quote) error {
-	return r.db.Create(quote).Error
+func (r *repository) SaveQuote(message, author string) (uint, error) {
+	quote := Quote{
+		Message: message,
+		Author:  author,
+	}
+	err := r.db.Create(&quote).Error
+	if err != nil {
+		return 0, fmt.Errorf("error creating quote: %w", err)
+	}
+	return quote.ID, nil
 }
 
 func (r *repository) DeleteQuote(id uint) error {
