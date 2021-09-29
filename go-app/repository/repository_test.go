@@ -107,14 +107,15 @@ func (suite *RepositoryTestSuite) Test_repository_CreateUser() {
 				suite.NoError(err)
 				suite.NoError(err)
 			}
-			_ = suite.repo.DeleteUser(tt.email)
+			err = suite.repo.DeleteUser(tt.email)
+			suite.NoError(err)
 		})
 	}
 }
 
 func (suite *RepositoryTestSuite) Test_repository_SaveJournalEntry() {
 	now := time.Now()
-	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
 	tests := []struct {
 		name           string
 		email          string
@@ -152,48 +153,48 @@ func (suite *RepositoryTestSuite) Test_repository_SaveJournalEntry() {
 				Author:  "this is an author",
 			},
 		},
-		// {
-		// 	name: "overwrites pre existing entry",
-		// 	date: today,
-		// 	entry: &JournalEntry{
-		// 		Grateful1:      "grateful1",
-		// 		Grateful2:      "grateful2",
-		// 		Grateful3:      "grateul-3",
-		// 		TodayGreat1:    "great1",
-		// 		TodayGreat2:    "great2",
-		// 		TodayGreat3:    "great3",
-		// 		Affirmation1:   "aff1",
-		// 		Affirmation2:   "aff2",
-		// 		HappenedGreat1: "happenedGreat1",
-		// 		HappenedGreat2: "happenedGreat2",
-		// 		HappenedGreat3: "happenedGreat3",
-		// 		Better1:        "b1",
-		// 		Better2:        "b2",
-		// 	},
-		// 	quote: Quote{
-		// 		Message: "salut",
-		// 		Author:  "me",
-		// 	},
-		// 	overwrite: &JournalEntry{
-		// 		Grateful1:      "test overwrite",
-		// 		Grateful2:      "over 2",
-		// 		Grateful3:      "over 3",
-		// 		TodayGreat1:    "over great1",
-		// 		TodayGreat2:    "over great2",
-		// 		TodayGreat3:    "over great3",
-		// 		Affirmation1:   "over aff1",
-		// 		Affirmation2:   "over aff2",
-		// 		HappenedGreat1: "over happened Great1",
-		// 		HappenedGreat2: "over happened Great2",
-		// 		HappenedGreat3: "over happened Great3",
-		// 		Better1:        "b1",
-		// 		Better2:        "b2",
-		// 	},
-		// 	overwriteQuote: Quote{
-		// 		Message: "overWrite msg",
-		// 		Author:  "me ovw",
-		// 	},
-		// },
+		{
+			name: "overwrites pre existing entry",
+			date: today,
+			entry: &JournalEntry{
+				Grateful1:      "grateful1",
+				Grateful2:      "grateful2",
+				Grateful3:      "grateul-3",
+				TodayGreat1:    "great1",
+				TodayGreat2:    "great2",
+				TodayGreat3:    "great3",
+				Affirmation1:   "aff1",
+				Affirmation2:   "aff2",
+				HappenedGreat1: "happenedGreat1",
+				HappenedGreat2: "happenedGreat2",
+				HappenedGreat3: "happenedGreat3",
+				Better1:        "b1",
+				Better2:        "b2",
+			},
+			quote: Quote{
+				Message: "salut",
+				Author:  "me",
+			},
+			overwrite: &JournalEntry{
+				Grateful1:      "test overwrite",
+				Grateful2:      "over 2",
+				Grateful3:      "over 3",
+				TodayGreat1:    "over great1",
+				TodayGreat2:    "over great2",
+				TodayGreat3:    "over great3",
+				Affirmation1:   "over aff1",
+				Affirmation2:   "over aff2",
+				HappenedGreat1: "over happened Great1",
+				HappenedGreat2: "over happened Great2",
+				HappenedGreat3: "over happened Great3",
+				Better1:        "b1",
+				Better2:        "b2",
+			},
+			overwriteQuote: Quote{
+				Message: "overWrite msg",
+				Author:  "me ovw",
+			},
+		},
 	}
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
@@ -206,7 +207,7 @@ func (suite *RepositoryTestSuite) Test_repository_SaveJournalEntry() {
 				suite.NoError(err)
 
 				// initialize entry data
-				tt.entry.Date = tt.date
+				tt.entry.Date = tt.date.Local()
 				tt.entry.UserID = usr.ID
 				qID, err := suite.repo.SaveQuote(tt.quote.Message, tt.quote.Author)
 				suite.NoError(err)
@@ -221,7 +222,7 @@ func (suite *RepositoryTestSuite) Test_repository_SaveJournalEntry() {
 				suite.NoError(err)
 				tt.entry.Quote = quote
 				if tt.overwrite != nil {
-					tt.overwrite.Date = tt.date
+					tt.overwrite.Date = tt.date.Local()
 					tt.overwrite.UserID = usr.ID
 					qID, err := suite.repo.SaveQuote(tt.overwriteQuote.Message, tt.overwriteQuote.Author)
 					suite.NoError(err)
@@ -234,7 +235,7 @@ func (suite *RepositoryTestSuite) Test_repository_SaveJournalEntry() {
 					tt.entry = tt.overwrite
 				}
 				suite.NoError(err, "repository.SaveJournalEntry() error = %v, wantErr %v", err, tt.wantErr)
-				savedEntry, err := suite.repo.GetJournalEntry(tt.entry.UserID, tt.date)
+				savedEntry, err := suite.repo.GetJournalEntry(tt.entry.UserID, tt.entry.Date)
 				suite.NoError(err)
 				suite.NotEqual(0, savedEntry.ID)
 
@@ -243,18 +244,24 @@ func (suite *RepositoryTestSuite) Test_repository_SaveJournalEntry() {
 				tt.entry.UpdatedAt = savedEntry.UpdatedAt
 				tt.entry.DeletedAt = savedEntry.DeletedAt
 				tt.entry.ID = savedEntry.ID
+				// suite.Equal(tt.entry.Date, savedEntry.Date)
 				suite.Equal(tt.entry, savedEntry)
 				fmt.Printf("actual: %#v\n", savedEntry)
 				fmt.Printf("expected: %#v\n", tt.entry)
 
+				if tt.entry != nil {
+					err = suite.repo.DeleteJournalEntry(tt.entry.UserID, tt.date)
+					suite.NoError(err)
+					err = suite.repo.DeleteQuote(tt.quote.ID)
+					suite.NoError(err)
+				}
+				err = suite.repo.DeleteUser(tt.email)
+				suite.NoError(err)
 				if tt.overwrite != nil {
 					_ = suite.repo.DeleteQuote(tt.overwriteQuote.ID)
 				}
-				if tt.entry != nil {
-					_ = suite.repo.DeleteJournalEntry(tt.entry.UserID, tt.date)
-					_ = suite.repo.DeleteQuote(tt.quote.ID)
-				}
-				_ = suite.repo.DeleteUser(tt.email)
+				err = suite.repo.DeleteQuote(qID)
+				suite.NoError(err)
 			}
 		})
 	}

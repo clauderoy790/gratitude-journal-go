@@ -55,19 +55,25 @@ func (r *repository) SaveJournalEntry(entry *JournalEntry) error {
 	if entry == nil {
 		return fmt.Errorf("Cannot save nil entry")
 	}
-	entry.Date = r.roundDate(entry.Date)
+	dbEntry := JournalEntry{}
 
-	err := r.db.Where("user_id = ? AND date = ?", entry.UserID, entry.Date).First(&JournalEntry{}).Error
-	if err == gorm.ErrRecordNotFound {
+	where := r.db.Model(&JournalEntry{}).Where("user_id = ? AND date = ?", entry.UserID, entry.Date)
+	result := where.First(&dbEntry)
+	if result.Error == gorm.ErrRecordNotFound {
 		return r.db.Create(entry).Error
+	} else if result.RowsAffected == 1 {
+		return where.Updates(entry).Error
 	}
-	return err
+	return result.Error
 }
 
 func (r *repository) GetJournalEntry(userID uint, date time.Time) (*JournalEntry, error) {
-	var entry JournalEntry
-	formattedDate := r.roundDate(date)
-	err := r.db.Where("user_id = ? AND date = ?", userID, formattedDate).First(&entry).Error
+	entry := JournalEntry{
+		UserID: userID,
+		Date:   r.roundDate(date),
+	}
+
+	err := r.db.Preload("Quote").Where("user_id = ? AND date = ?", userID, entry.Date).First(&entry).Error
 	if err == gorm.ErrRecordNotFound {
 		err = r.db.Create(&entry).Error
 	}
@@ -80,8 +86,7 @@ func (r *repository) DeleteJournalEntry(userID uint, date time.Time) error {
 }
 
 func (r *repository) roundDate(date time.Time) time.Time {
-	format := "2006-01-02"
-	formatted, _ := time.Parse(format, date.Format(format))
+	formatted := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
 	return formatted
 }
 
