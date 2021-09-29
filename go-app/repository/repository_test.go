@@ -258,7 +258,8 @@ func (suite *RepositoryTestSuite) Test_repository_SaveJournalEntry() {
 				err = suite.repo.DeleteUser(tt.email)
 				suite.NoError(err)
 				if tt.overwrite != nil {
-					_ = suite.repo.DeleteQuote(tt.overwriteQuote.ID)
+					err = suite.repo.DeleteQuote(tt.overwrite.QuoteID)
+					suite.NoError(err)
 				}
 				err = suite.repo.DeleteQuote(qID)
 				suite.NoError(err)
@@ -267,36 +268,47 @@ func (suite *RepositoryTestSuite) Test_repository_SaveJournalEntry() {
 	}
 }
 
-func Test_repository_GetJournalEntry(t *testing.T) {
-	type fields struct {
-		db *gorm.DB
-	}
-	type args struct {
-		userID uint
-		date   time.Time
-	}
+func (suite *RepositoryTestSuite) Test_repository_GetJournalEntry() {
+	now := time.Now()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
+	yestserday := today.Add(-time.Hour * 24)
+	tomorrow := today.Add(time.Hour * 24)
+
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    *JournalEntry
-		wantErr bool
+		name      string
+		email     string
+		callCount int
+		dates     []time.Time
 	}{
-		// TODO: Add test cases.
+		{
+			name:      "call three times in a row",
+			email:     "testmail@gmail.com",
+			callCount: 3,
+			dates:     []time.Time{yestserday, tomorrow},
+		},
+		{
+			name:      "call once",
+			email:     "testmail2@gmail.com",
+			callCount: 1,
+			dates:     []time.Time{today},
+		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := &repository{
-				db: tt.fields.db,
+		suite.Run(tt.name, func() {
+			_ = suite.repo.CreateUser(tt.email, "password")
+			user, _ := suite.repo.GetUser(tt.email)
+			for _, date := range tt.dates {
+				for i := 0; i < tt.callCount; i++ {
+					entry, err := suite.repo.GetJournalEntry(user.ID, date)
+					suite.NoError(err)
+					suite.NotEqual(0, entry.ID)
+					suite.NotEqual(0, entry.QuoteID)
+				}
+				err := suite.repo.DeleteJournalEntry(user.ID, date)
+				suite.NoError(err)
 			}
-			got, err := r.GetJournalEntry(tt.args.userID, tt.args.date)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("repository.GetJournalEntry() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("repository.GetJournalEntry() = %v, want %v", got, tt.want)
-			}
+			err := suite.repo.DeleteUser(tt.email)
+			suite.NoError(err)
 		})
 	}
 }
@@ -328,33 +340,6 @@ func Test_repository_GetQuotes(t *testing.T) {
 			}
 		})
 	}
-}
-
-func Test_repository_SaveQuote(t *testing.T) {
-	// type fields struct {
-	// 	db *gorm.DB
-	// }
-	// type args struct {
-	// 	quote *Quote
-	// }
-	// tests := []struct {
-	// 	name    string
-	// 	fields  fields
-	// 	args    args
-	// 	wantErr bool
-	// }{
-	// 	// TODO: Add test cases.
-	// }
-	// for _, tt := range tests {
-	// t.Run(tt.name, func(t *testing.T) {
-	// 	r := &repository{
-	// 		db: tt.fields.db,
-	// 	}
-	// 	if err := r.SaveQuote(tt.args.quote); (err != nil) != tt.wantErr {
-	// 		t.Errorf("repository.SaveQuote() error = %v, wantErr %v", err, tt.wantErr)
-	// 	}
-	// })
-	// }
 }
 
 func Test_repository_DeleteAllQuotes(t *testing.T) {

@@ -68,6 +68,7 @@ func (r *repository) SaveJournalEntry(entry *JournalEntry) error {
 }
 
 func (r *repository) GetJournalEntry(userID uint, date time.Time) (*JournalEntry, error) {
+	// todo here! Find a random quote when quoteId is not set
 	entry := JournalEntry{
 		UserID: userID,
 		Date:   r.roundDate(date),
