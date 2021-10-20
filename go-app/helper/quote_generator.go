@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/clauderoy790/gratitude-journal/models"
+	"github.com/clauderoy790/gratitude-journal/repository"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -14,7 +14,7 @@ var QuoteGenerator QuoteGen = QuoteGen{}
 
 type QuoteGen struct{}
 
-func (*QuoteGen) GetRandomQuote(userID, date string) (quote models.Quote, err error) {
+func (*QuoteGen) GetRandomQuote(userID, date string) (quote repository.Quote, err error) {
 	mixedId, err := combineToStr(userID, date, 7)
 
 	if err != nil {

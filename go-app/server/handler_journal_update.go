@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/clauderoy790/gratitude-journal/helper"
-	"github.com/clauderoy790/gratitude-journal/models"
+	"github.com/clauderoy790/gratitude-journal/repository"
 )
 
 func (s *Server) journalUpdateHandler(writer http.ResponseWriter, request *http.Request) {
@@ -23,7 +23,7 @@ func (s *Server) journalUpdateHandler(writer http.ResponseWriter, request *http.
 		helper.WriteError(writer, errors.New("must provide userID, date and entry"), http.StatusBadRequest)
 		return
 	}
-	jEntry := models.JournalEntry{}
+	jEntry := repository.JournalEntry{}
 	err = json.Unmarshal([]byte(entry), &jEntry)
 	if err != nil {
 		helper.WriteError(writer, errors.New("entry is not in a valid format"), http.StatusBadRequest)

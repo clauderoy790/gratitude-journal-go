@@ -4,7 +4,7 @@ import (
 	"net/mail"
 	"time"
 
-	"github.com/clauderoy790/gratitude-journal/models"
+	"github.com/clauderoy790/gratitude-journal/repository"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
@@ -14,18 +14,18 @@ var UserHelper = UserHelp{}
 
 type UserHelp struct{}
 
-func (UserHelp) Register(email, password, verifiedPassword string) models.RegisterResult {
+func (UserHelp) Register(email, password, verifiedPassword string) repository.RegisterResult {
 	// if !isValidEmail(email) {
-	// 	return models.RegisterResult{"","Email must be valid."}
+	// 	return repository.RegisterResult{"","Email must be valid."}
 	// }
 	// if len(password) < config.Get().App.MinPasswordLength {
-	// 	return models.RegisterResult{UserID:"",Error:fmt.Sprintf("Password must be at least %v characters.",config.Get().App.MinPasswordLength)}
+	// 	return repository.RegisterResult{UserID:"",Error:fmt.Sprintf("Password must be at least %v characters.",config.Get().App.MinPasswordLength)}
 	// }
 	// if password != verifiedPassword {
-	// 	return models.RegisterResult{"","Passwords are not identical."}
+	// 	return repository.RegisterResult{"","Passwords are not identical."}
 	// }
 	// if user, _ := UserHelper.GetUser(email); user.ID != primitive.NilObjectID {
-	// 	return models.RegisterResult{UserID:"",Error:email + " is already registered"}
+	// 	return repository.RegisterResult{UserID:"",Error:email + " is already registered"}
 	// }
 	//todo here
 	return registerUser(email, password)
@@ -36,25 +36,25 @@ func isValidEmail(email string) bool {
 	return err == nil
 }
 
-func (UserHelp) GetUser(email string) (models.User, error) {
-	user := models.User{}
+func (UserHelp) GetUser(email string) (repository.User, error) {
+	user := repository.User{}
 	if err := MongoHelper.UsersCollection.FindOne(MongoHelper.Context, bson.D{{"email", email}}).Decode(&user); err != nil {
-		return models.User{}, err
+		return repository.User{}, err
 	}
 
 	return user, nil
 }
 
-func registerUser(email, password string) models.RegisterResult {
+func registerUser(email, password string) repository.RegisterResult {
 	var err error
 	var hashed string
 
 	hashed, err = hashPass(password)
 	if err != nil {
-		return models.RegisterResult{"", GetErrorMessage(err)}
+		return repository.RegisterResult{"", GetErrorMessage(err)}
 	}
 
-	user := models.User{
+	user := repository.User{
 		Email:        email,
 		PasswordHash: hashed,
 		DateCreated:  time.Now(),
@@ -63,10 +63,10 @@ func registerUser(email, password string) models.RegisterResult {
 	insertedId, ok := res.InsertedID.(primitive.ObjectID)
 
 	if err != nil || !ok {
-		return models.RegisterResult{"", "A server error occurred, try again later"}
+		return repository.RegisterResult{"", "A server error occurred, try again later"}
 	}
 
-	return models.RegisterResult{UserID: insertedId.Hex(), Error: GetErrorMessage(err)}
+	return repository.RegisterResult{UserID: insertedId.Hex(), Error: GetErrorMessage(err)}
 }
 
 func hashPass(password string) (string, error) {
@@ -78,25 +78,25 @@ func hashPass(password string) (string, error) {
 	return string(hash), nil
 }
 
-func (UserHelp) Login(email, password string) models.LoginResult {
+func (UserHelp) Login(email, password string) repository.LoginResult {
 	// var err error
-	// var user models.User
+	// var user repository.User
 
 	// user, err = UserHelper.GetUser(email)
 	// if err == mongo.ErrNoDocuments {
-	// 	return models.LoginResult{"", false, "This user is not registered."}
+	// 	return repository.LoginResult{"", false, "This user is not registered."}
 	// } else if err != nil {
 	// 	fmt.Println("error: ", err)
-	// 	return models.LoginResult{Error: "A server error occurred, try again later."}
+	// 	return repository.LoginResult{Error: "A server error occurred, try again later."}
 	// }
 
 	// err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	// if err != nil {
-	// 	return models.LoginResult{"", false, "Password is not valid"}
+	// 	return repository.LoginResult{"", false, "Password is not valid"}
 	// }
 
-	return models.LoginResult{}
-	//return models.LoginResult{UserID: user.ID.Hex(), Success: true}
+	return repository.LoginResult{}
+	//return repository.LoginResult{UserID: user.ID.Hex(), Success: true}
 	//todo here
 }
 

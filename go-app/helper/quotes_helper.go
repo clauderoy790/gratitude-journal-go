@@ -6,35 +6,22 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/clauderoy790/gratitude-journal/models"
+	"github.com/clauderoy790/gratitude-journal/repository"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var quotes []models.Quote
+var quotes []repository.Quote
 var quoteFile = "quotes.txt"
-var QuotesHelper QuotesHelp = QuotesHelp{-1}
+var QuotesHelper QuotesHelp = QuotesHelp{}
 
 type QuotesHelp struct {
-	quotesCount int
 }
 
 func (q *QuotesHelp) RefreshQuotes() {
 	quotes = readQuoteFile(quoteFile)
 	rebuildQuoteCollection(quotes)
 }
-
-func (q *QuotesHelp) QuotesCount() int {
-	if q.quotesCount < 0 {
-		count, err := MongoHelper.QuotesCollection.CountDocuments(MongoHelper.Context, bson.D{}, nil)
-		if err != nil {
-			log.Fatal("failed to get quotes count: ", err)
-		}
-		q.quotesCount = int(count)
-	}
-	return q.quotesCount
-}
-
-func rebuildQuoteCollection(quotes []models.Quote) {
+func rebuildQuoteCollection(quotes []repository.Quote) {
 	MongoHelper.QuotesCollection.Drop(MongoHelper.Context)
 
 	err := MongoHelper.Db.CreateCollection(MongoHelper.Context, "quotes")
@@ -50,8 +37,8 @@ func rebuildQuoteCollection(quotes []models.Quote) {
 	}
 }
 
-func readQuoteFile(filename string) []models.Quote {
-	var quotes []models.Quote
+func readQuoteFile(filename string) []repository.Quote {
+	var quotes []repository.Quote
 
 	//todo here
 	// f, err := os.Open(filename)
@@ -68,7 +55,7 @@ func readQuoteFile(filename string) []models.Quote {
 	// 	if len(split) != 2 {
 	// 		log.Fatalf("Wrong quote format, fix this before continuing %v\n", line)
 	// 	} else {
-	// 		quote := models.Quote{ID: primitive.NewObjectID(), QuoteID: i, Message: formatQuote(split[0]), Author: strings.TrimSpace(split[1])}
+	// 		quote := repository.Quote{ID: primitive.NewObjectID(), QuoteID: i, Message: formatQuote(split[0]), Author: strings.TrimSpace(split[1])}
 	// 		quotes = append(quotes, quote)
 	// 	}
 	// }

@@ -2,7 +2,7 @@ package helper
 
 import (
 	"github.com/clauderoy790/gratitude-journal/config"
-	"github.com/clauderoy790/gratitude-journal/models"
+	"github.com/clauderoy790/gratitude-journal/repository"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -11,7 +11,7 @@ var JournalHelper = JournalHelp{}
 
 type JournalHelp struct{}
 
-func (JournalHelp) WriteEntry(userID, date string, entry models.JournalEntry) (err error) {
+func (JournalHelp) WriteEntry(userID, date string, entry repository.JournalEntry) (err error) {
 	// entry.UserID = userID
 	// entry.Date = date
 
@@ -30,16 +30,16 @@ func (JournalHelp) WriteEntry(userID, date string, entry models.JournalEntry) (e
 	return nil
 }
 
-func (JournalHelp) GetEntry(userID, date string) models.JournalEntryResponse {
-	entry := models.JournalEntry{}
+func (JournalHelp) GetEntry(userID, date string) repository.JournalEntryResponse {
+	entry := repository.JournalEntry{}
 	err := MongoHelper.JournalEntriesCollection.FindOne(MongoHelper.Context, bson.D{{Key: "userID", Value: userID}, {Key: "date", Value: date}}).Decode(&entry)
 
 	if err == mongo.ErrNoDocuments {
-		return models.JournalEntryResponse{Entry: models.JournalEntry{}, Error: config.Get().Messages.NoEntryFound}
+		return repository.JournalEntryResponse{Entry: repository.JournalEntry{}, Error: config.Get().Messages.NoEntryFound}
 	} else if err != nil {
-		return models.JournalEntryResponse{Entry: models.JournalEntry{}, Error: "A server error occurred, try again later."}
+		return repository.JournalEntryResponse{Entry: repository.JournalEntry{}, Error: "A server error occurred, try again later."}
 	}
-	return models.JournalEntryResponse{Entry: entry}
+	return repository.JournalEntryResponse{Entry: entry}
 }
 
 func (JournalHelp) DeleteEntry(userID, date string) error {

@@ -9,7 +9,7 @@ package tests
 // )
 
 // var today = time.Now().Format("01-02-2006")
-// var testEntry = models.JournalEntry{
+// var testEntry = repository.JournalEntry{
 // 	Date:           today,
 // 	Grateful1:      "test1",
 // 	Grateful2:      "test2",
@@ -42,7 +42,7 @@ package tests
 // 	if res.Error == "" {
 // 		t.Fatalf("got no error while trying to get a freshly deleted entry")
 // 	}
-// 	if res.Entry != (models.JournalEntry{}) {
+// 	if res.Entry != (repository.JournalEntry{}) {
 // 		t.Fatalf("got a non empty entry right after deleting it")
 // 	}
 // }
@@ -104,7 +104,7 @@ package tests
 // 	user, _ := uh.GetUser(email)
 
 // 	jh.WriteEntry(user.ID.Hex(), today, testEntry)
-// 	updatedEntry := models.JournalEntry{
+// 	updatedEntry := repository.JournalEntry{
 // 		UserID:         user.ID.Hex(),
 // 		Date:           today,
 // 		Grateful1:      "updatedTest1",
