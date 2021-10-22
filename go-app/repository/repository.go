@@ -143,8 +143,6 @@ func (r *repository) combineToStr(id, date string, maxLen int) (nb int, err erro
 func (r *repository) clamp(str string, max int) string {
 	if len(str) > max {
 		str = str[:max]
-	} else {
-		str = str[:len(str)]
 	}
 	return str
 }

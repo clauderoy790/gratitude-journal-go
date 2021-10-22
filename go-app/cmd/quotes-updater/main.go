@@ -45,7 +45,7 @@ func main() {
 
 	count, err := repo.QuotesCount()
 	if err != nil {
-		panic(fmt.Sprintf("Error retrieving quotes count: ", err))
+		panic(fmt.Sprintf("Error retrieving quotes count: %v", err))
 	}
 	fmt.Printf("Successfully created %d quotes!\n", count)
 }
