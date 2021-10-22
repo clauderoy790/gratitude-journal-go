@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/clauderoy790/gratitude-journal/config"
-	"github.com/clauderoy790/gratitude-journal/helper"
 	"github.com/clauderoy790/gratitude-journal/repository"
 	"github.com/gorilla/mux"
 )
@@ -36,9 +35,6 @@ func New(ctx context.Context, repo repository.Repository, cfg config.Config) *Se
 }
 
 func (s *Server) Run() error {
-	helper.MongoHelper.Connect()
-	defer helper.MongoHelper.Disconnect()
-
 	fmt.Printf("Server started server on port: %d\n", s.cfg.App.Port)
 	return s.HttpServer().ListenAndServe()
 }

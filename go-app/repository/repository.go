@@ -2,6 +2,9 @@ package repository
 
 import (
 	"fmt"
+	"math/rand"
+	"regexp"
+	"strconv"
 	"time"
 
 	"github.com/clauderoy790/gratitude-journal/config"
@@ -11,13 +14,14 @@ import (
 
 type Repository interface {
 	GetUser(email string) (*User, error)
-	CreateUser(email, passwordHash string) error
+	CreateUser(email, passwordHash string) (uint, error)
 	DeleteUser(email string) error
 
 	SaveJournalEntry(entry *JournalEntry) error
 	GetJournalEntry(userID uint, date time.Time) (*JournalEntry, error)
 	DeleteJournalEntry(userID uint, date time.Time) error
 
+	GetFirstQuoteID() (int, error)
 	QuotesCount() (int, error)
 	GetQuote(id uint) (Quote, error)
 	SaveQuote(message, author string) (uint, error)
@@ -39,12 +43,13 @@ func (r *repository) GetUser(email string) (*User, error) {
 	return &user, err
 }
 
-func (r *repository) CreateUser(email, passwordHash string) error {
+func (r *repository) CreateUser(email, passwordHash string) (uint, error) {
 	user := User{Email: email, PasswordHash: passwordHash}
 	if r.db.Where("email = ?", email).First(&User{}).Error == gorm.ErrRecordNotFound {
-		return r.db.Create(&user).Error
+		err := r.db.Create(&user).Error
+		return user.ID, err
 	}
-	return fmt.Errorf("user with email %v already exists", email)
+	return 0, fmt.Errorf("user with email %v already exists", email)
 }
 
 func (r *repository) DeleteUser(email string) error {
@@ -68,17 +73,80 @@ func (r *repository) SaveJournalEntry(entry *JournalEntry) error {
 }
 
 func (r *repository) GetJournalEntry(userID uint, date time.Time) (*JournalEntry, error) {
-	// todo here! Find a random quote when quoteId is not set
 	entry := JournalEntry{
 		UserID: userID,
 		Date:   r.roundDate(date),
 	}
 
-	err := r.db.Preload("Quote").Where("user_id = ? AND date = ?", userID, entry.Date).First(&entry).Error
+	var err error
+	var quote *Quote
+	err = r.db.Preload("Quote").Where("user_id = ? AND date = ?", userID, entry.Date).First(&entry).Error
 	if err == gorm.ErrRecordNotFound {
+		quote, err = r.getRandomQuote(userID, date)
+		if err != nil {
+			return nil, fmt.Errorf("error getting quote: %w", err)
+		}
+		entry.QuoteID = quote.ID
 		err = r.db.Create(&entry).Error
 	}
 	return &entry, err
+}
+
+func (r *repository) getRandomQuote(userID uint, date time.Time) (*Quote, error) {
+	userIDStr := strconv.FormatUint(uint64(userID), 10)
+	dateStr := date.Format("2006-01-02")
+
+	mixedId, err := r.combineToStr(userIDStr, dateStr, 7)
+	if err != nil {
+		return nil, err
+	}
+	s1 := rand.NewSource(int64(mixedId))
+	r1 := rand.New(s1)
+
+	count, err := r.QuotesCount()
+
+	if err != nil {
+		return nil, fmt.Errorf("Failed to get quotes count: %w", err)
+	}
+
+	firstID, err := r.GetFirstQuoteID()
+	if err != nil {
+		return nil, fmt.Errorf("error getting first quote: %w", err)
+	}
+
+	randNb := r1.Intn(count) + int(firstID)
+	randID := uint(randNb)
+	quote, err := r.GetQuote(randID)
+	if err != nil {
+		return nil, err
+	}
+	return &quote, nil
+}
+
+func (r *repository) combineToStr(id, date string, maxLen int) (nb int, err error) {
+
+	// Make a Regex to say we only want numbers
+	reg, err := regexp.Compile("[^0-9]+")
+	if err != nil {
+		return 0, err
+	}
+
+	// Remove all characters for combined Id + Date
+	idNumbers := reg.ReplaceAllString(id, "")
+	idNumbers = r.clamp(idNumbers, maxLen)
+	processedString := idNumbers + reg.ReplaceAllString(date, "")
+
+	nb, err = strconv.Atoi(processedString)
+	return nb, err
+}
+
+func (r *repository) clamp(str string, max int) string {
+	if len(str) > max {
+		str = str[:max]
+	} else {
+		str = str[:len(str)]
+	}
+	return str
 }
 
 func (r *repository) DeleteJournalEntry(userID uint, date time.Time) error {
@@ -114,13 +182,24 @@ func (r *repository) DeleteQuote(id uint) error {
 }
 
 func (r *repository) DeleteAllQuotes() error {
+	// todo test this
 	return r.db.Unscoped().Where("1 = 1").Delete(&Quote{}).Error
 }
 
 func (r *repository) QuotesCount() (int, error) {
+	// todo unit test this
 	var count int64
 	err := r.db.Model(&Quote{}).Count(&count).Error
 	return int(count), err
+}
+
+func (r *repository) GetFirstQuoteID() (int, error) {
+	var quote Quote
+	err := r.db.Model(&Quote{}).First(&quote).Error
+	if err != nil {
+		return 0, nil
+	}
+	return int(quote.ID), err
 }
 
 func (r *repository) GetQuote(id uint) (Quote, error) {

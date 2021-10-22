@@ -2,7 +2,6 @@ package repository
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 	"time"
 
@@ -50,8 +49,9 @@ func (suite *RepositoryTestSuite) Test_repository_GetUser() {
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
 			if tt.createUserBefore {
-				err := suite.repo.CreateUser(tt.email, tt.password)
+				userID, err := suite.repo.CreateUser(tt.email, tt.password)
 				suite.NoError(err)
+				suite.NotEqual(0, userID)
 			}
 			got, err := suite.repo.GetUser(tt.email)
 			if tt.wantErr {
@@ -93,10 +93,11 @@ func (suite *RepositoryTestSuite) Test_repository_CreateUser() {
 		suite.Run(tt.name, func() {
 			var err error
 			if tt.createUserBefore {
-				err = suite.repo.CreateUser(tt.email, tt.password)
+				userID, err := suite.repo.CreateUser(tt.email, tt.password)
 				suite.NoError(err)
+				suite.NotEqual(0, userID)
 			}
-			err = suite.repo.CreateUser(tt.email, tt.password)
+			_, err = suite.repo.CreateUser(tt.email, tt.password)
 			if tt.wantErr {
 				suite.Error(err)
 			} else {
@@ -202,7 +203,7 @@ func (suite *RepositoryTestSuite) Test_repository_SaveJournalEntry() {
 				err := suite.repo.SaveJournalEntry(tt.entry)
 				suite.Error(err)
 			} else {
-				_ = suite.repo.CreateUser(tt.email, "rerer")
+				_, _ = suite.repo.CreateUser(tt.email, "rerer")
 				usr, err := suite.repo.GetUser(tt.email)
 				suite.NoError(err)
 
@@ -295,7 +296,7 @@ func (suite *RepositoryTestSuite) Test_repository_GetJournalEntry() {
 	}
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
-			_ = suite.repo.CreateUser(tt.email, "password")
+			_, _ = suite.repo.CreateUser(tt.email, "password")
 			user, _ := suite.repo.GetUser(tt.email)
 			for _, date := range tt.dates {
 				for i := 0; i < tt.callCount; i++ {
@@ -313,14 +314,34 @@ func (suite *RepositoryTestSuite) Test_repository_GetJournalEntry() {
 	}
 }
 
-func Test_repository_GetQuotes(t *testing.T) {
+func (suite *RepositoryTestSuite) Test_repository_GetRandomQuote() {
+
+	for i := 0; i < 60; i++ {
+		suite.Run(fmt.Sprintf("execution n%d", (i+1)), func() {
+			email := "test@email.com"
+			_ = suite.repo.DeleteUser(email)
+			userID, err := suite.repo.CreateUser(email, "fsdfsdf")
+			suite.NoError(err)
+			now := time.Now()
+			today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
+			repo, ok := suite.repo.(*repository)
+			suite.True(ok)
+			quote, err := repo.getRandomQuote(userID, today)
+			suite.NotEqual(0, quote.ID)
+			suite.NotEmpty(quote.Message)
+			suite.NotEmpty(quote.Author)
+			suite.NoError(err)
+		})
+	}
+}
+
+func Test_repository_DeleteAllQuotes(t *testing.T) {
 	type fields struct {
 		db *gorm.DB
 	}
 	tests := []struct {
 		name    string
 		fields  fields
-		want    []Quote
 		wantErr bool
 	}{
 		// TODO: Add test cases.
@@ -330,19 +351,14 @@ func Test_repository_GetQuotes(t *testing.T) {
 			r := &repository{
 				db: tt.fields.db,
 			}
-			got, err := r.GetQuotes()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("repository.GetQuotes() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("repository.GetQuotes() = %v, want %v", got, tt.want)
+			if err := r.DeleteAllQuotes(); (err != nil) != tt.wantErr {
+				t.Errorf("repository.DeleteAllQuotes() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func Test_repository_DeleteAllQuotes(t *testing.T) {
+func Test_repository_(t *testing.T) {
 	type fields struct {
 		db *gorm.DB
 	}

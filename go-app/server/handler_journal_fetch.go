@@ -1,10 +1,13 @@
 package server
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/clauderoy790/gratitude-journal/helper"
+	"github.com/clauderoy790/gratitude-journal/repository"
 )
 
 func (s *Server) journalFetchHandler(writer http.ResponseWriter, request *http.Request) {
@@ -13,18 +16,34 @@ func (s *Server) journalFetchHandler(writer http.ResponseWriter, request *http.R
 		helper.WriteError(writer, err, http.StatusBadRequest)
 		return
 	}
-	userID := params["userID"]
-	date := params["date"]
-
-	if userID == "" || date == "" {
-		helper.WriteError(writer, errors.New("must provide userID and date"), http.StatusBadRequest)
+	userID, err := strconv.ParseUint(params["userID"], 10, 32)
+	if err != nil {
+		helper.WriteError(writer, fmt.Errorf("error parsing userID: %w", err), http.StatusBadRequest)
 		return
 	}
-	//Read entry
-	journalRes := helper.JournalHelper.GetEntry(userID, date)
-	if journalRes.Error != "" {
-		helper.WriteError(writer, errors.New(journalRes.Error), http.StatusInternalServerError)
-	} else {
-		helper.WriteJson(writer, journalRes.Entry)
+
+	date, err := time.Parse("", params["date"])
+	if err != nil {
+		helper.WriteError(writer, fmt.Errorf("error parsing date", err), http.StatusBadRequest)
+		return
 	}
+
+	//Read entry
+	entry, err := s.repo.GetJournalEntry(uint(userID), date)
+	if err != nil {
+		helper.WriteError(writer, fmt.Errorf("error getting entry: %w", err), http.StatusInternalServerError)
+		return
+	}
+	helper.WriteJson(writer, entry)
+}
+
+type JournalEntryResponse struct {
+	Entry repository.JournalEntry `json:"entry"`
+	Error string                  `json:"error"`
+}
+
+type JournalEntryRequest struct {
+	Date   string                  `json:"date"`
+	UserID string                  `json:"userID"`
+	Entry  repository.JournalEntry `json:"entry"`
 }
