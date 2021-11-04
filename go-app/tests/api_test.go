@@ -5,11 +5,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/clauderoy790/gratitude-journal/server"
-	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/clauderoy790/gratitude-journal/config"
+	"github.com/clauderoy790/gratitude-journal/repository"
+	"github.com/clauderoy790/gratitude-journal/server"
+	"github.com/stretchr/testify/suite"
 )
 
 var baseTestUrl = "http://localhost:8080/"
@@ -21,8 +24,15 @@ type ApiSuite struct {
 
 func (s *ApiSuite) SetupSuite() {
 	go func() {
-		server := server.New(context.Background())
-		server.Start()
+		cfg := config.Get()
+		db, err := repository.ConnectToDatabase(&cfg)
+		if err != nil {
+			panic(err)
+		}
+		repo := repository.NewRepository(db)
+
+		server := server.New(context.Background(), repo, cfg)
+		server.Run()
 	}()
 	time.Sleep(150 * time.Millisecond)
 	s.client = http.Client{}

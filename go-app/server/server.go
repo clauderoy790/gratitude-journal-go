@@ -3,25 +3,28 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/clauderoy790/gratitude-journal/config"
-	"github.com/clauderoy790/gratitude-journal/helpers"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/clauderoy790/gratitude-journal/config"
+	"github.com/clauderoy790/gratitude-journal/repository"
+	"github.com/gorilla/mux"
 )
 
 type Server struct {
 	muxRouter  *mux.Router
 	ctx        context.Context
 	cfg        config.Config
+	repo       repository.Repository
 	httpServer *http.Server
 }
 
 type M map[string]interface{}
 
-func New(ctx context.Context) *Server {
+func New(ctx context.Context, repo repository.Repository, cfg config.Config) *Server {
 	server := Server{
-		ctx: ctx,
-		cfg: config.Get(),
+		ctx:  ctx,
+		cfg:  cfg,
+		repo: repo,
 	}
 	server.setupRoutes()
 	server.httpServer = &http.Server{
@@ -31,13 +34,9 @@ func New(ctx context.Context) *Server {
 	return &server
 }
 
-func (s *Server) Start() error {
-	helpers.MongoHelper.Connect()
-	defer helpers.MongoHelper.Disconnect()
-
+func (s *Server) Run() error {
 	fmt.Printf("Server started server on port: %d\n", s.cfg.App.Port)
-	err := s.HttpServer().ListenAndServe()
-	return err
+	return s.HttpServer().ListenAndServe()
 }
 
 func (s *Server) HttpServer() *http.Server {

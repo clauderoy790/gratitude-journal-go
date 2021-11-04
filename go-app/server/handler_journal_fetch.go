@@ -1,30 +1,49 @@
 package server
 
 import (
-	"errors"
-	"github.com/clauderoy790/gratitude-journal/helpers"
-	http_helper "github.com/clauderoy790/gratitude-journal/http-helper"
+	"fmt"
 	"net/http"
+	"strconv"
+	"time"
+
+	"github.com/clauderoy790/gratitude-journal/helper"
+	"github.com/clauderoy790/gratitude-journal/repository"
 )
 
 func (s *Server) journalFetchHandler(writer http.ResponseWriter, request *http.Request) {
-	params, err := http_helper.ProcessJsonBody(request)
+	params, err := helper.ProcessJsonBody(request)
 	if err != nil {
-		http_helper.WriteError(writer, err, http.StatusBadRequest)
+		helper.WriteError(writer, err, http.StatusBadRequest)
 		return
 	}
-	userID := params["userID"]
-	date := params["date"]
+	userID, err := strconv.ParseUint(params["userId"], 10, 32)
+	if err != nil {
+		helper.WriteError(writer, fmt.Errorf("error parsing userID: %w", err), http.StatusBadRequest)
+		return
+	}
 
-	if userID == "" || date == "" {
-		http_helper.WriteError(writer, errors.New("must provide userID and date"), http.StatusBadRequest)
+	date, err := time.Parse("", params["date"])
+	if err != nil {
+		helper.WriteError(writer, fmt.Errorf("error parsing date: %w", err), http.StatusBadRequest)
 		return
 	}
+
 	//Read entry
-	journalRes := helpers.JournalHelper.GetEntry(userID, date)
-	if journalRes.Error != "" {
-		http_helper.WriteError(writer, errors.New(journalRes.Error), http.StatusInternalServerError)
-	} else {
-		http_helper.WriteJson(writer, journalRes.Entry)
+	entry, err := s.repo.GetJournalEntry(uint(userID), date)
+	if err != nil {
+		helper.WriteError(writer, fmt.Errorf("error getting entry: %w", err), http.StatusInternalServerError)
+		return
 	}
+	helper.WriteJson(writer, entry)
+}
+
+type JournalEntryResponse struct {
+	Entry repository.JournalEntry `json:"entry"`
+	Error string                  `json:"error"`
+}
+
+type JournalEntryRequest struct {
+	Date   string                  `json:"date"`
+	UserID string                  `json:"userID"`
+	Entry  repository.JournalEntry `json:"entry"`
 }
