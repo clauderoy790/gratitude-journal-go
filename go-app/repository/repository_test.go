@@ -7,7 +7,6 @@ import (
 
 	"github.com/clauderoy790/gratitude-journal/config"
 	"github.com/stretchr/testify/suite"
-	"gorm.io/gorm"
 )
 
 type RepositoryTestSuite struct {
@@ -327,56 +326,11 @@ func (suite *RepositoryTestSuite) Test_repository_GetRandomQuote() {
 			repo, ok := suite.repo.(*repository)
 			suite.True(ok)
 			quote, err := repo.getRandomQuote(userID, today)
+			suite.NoError(err, "error getting random quote")
 			suite.NotEqual(0, quote.ID)
 			suite.NotEmpty(quote.Message)
 			suite.NotEmpty(quote.Author)
-			suite.NoError(err)
-		})
-	}
-}
-
-func Test_repository_DeleteAllQuotes(t *testing.T) {
-	type fields struct {
-		db *gorm.DB
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := &repository{
-				db: tt.fields.db,
-			}
-			if err := r.DeleteAllQuotes(); (err != nil) != tt.wantErr {
-				t.Errorf("repository.DeleteAllQuotes() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func Test_repository_(t *testing.T) {
-	type fields struct {
-		db *gorm.DB
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := &repository{
-				db: tt.fields.db,
-			}
-			if err := r.DeleteAllQuotes(); (err != nil) != tt.wantErr {
-				t.Errorf("repository.DeleteAllQuotes() error = %v, wantErr %v", err, tt.wantErr)
-			}
+			_ = suite.repo.DeleteUser(email)
 		})
 	}
 }

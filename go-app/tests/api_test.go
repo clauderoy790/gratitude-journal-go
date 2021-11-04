@@ -31,11 +31,6 @@ func (s *ApiSuite) SetupSuite() {
 		}
 		repo := repository.NewRepository(db)
 
-		err = repo.DeleteAllQuotes()
-		if err != nil {
-			panic(err)
-		}
-
 		server := server.New(context.Background(), repo, cfg)
 		server.Run()
 	}()

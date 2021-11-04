@@ -31,7 +31,6 @@ func main() {
 	}
 
 	quotes, err := readQuoteFile(quoteFile)
-
 	if err != nil {
 		panic(err)
 	}

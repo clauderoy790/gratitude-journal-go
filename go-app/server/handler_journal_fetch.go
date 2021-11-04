@@ -16,7 +16,7 @@ func (s *Server) journalFetchHandler(writer http.ResponseWriter, request *http.R
 		helper.WriteError(writer, err, http.StatusBadRequest)
 		return
 	}
-	userID, err := strconv.ParseUint(params["userID"], 10, 32)
+	userID, err := strconv.ParseUint(params["userId"], 10, 32)
 	if err != nil {
 		helper.WriteError(writer, fmt.Errorf("error parsing userID: %w", err), http.StatusBadRequest)
 		return
@@ -24,7 +24,7 @@ func (s *Server) journalFetchHandler(writer http.ResponseWriter, request *http.R
 
 	date, err := time.Parse("", params["date"])
 	if err != nil {
-		helper.WriteError(writer, fmt.Errorf("error parsing date", err), http.StatusBadRequest)
+		helper.WriteError(writer, fmt.Errorf("error parsing date: %w", err), http.StatusBadRequest)
 		return
 	}
 

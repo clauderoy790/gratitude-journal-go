@@ -109,6 +109,10 @@ func (r *repository) getRandomQuote(userID uint, date time.Time) (*Quote, error)
 		return nil, fmt.Errorf("Failed to get quotes count: %w", err)
 	}
 
+	if count == 0 {
+		return nil, fmt.Errorf("Cannot get random quote because quote count is 0")
+	}
+
 	firstID, err := r.GetFirstQuoteID()
 	if err != nil {
 		return nil, fmt.Errorf("error getting first quote: %w", err)
@@ -180,12 +184,10 @@ func (r *repository) DeleteQuote(id uint) error {
 }
 
 func (r *repository) DeleteAllQuotes() error {
-	// todo test this
 	return r.db.Unscoped().Where("1 = 1").Delete(&Quote{}).Error
 }
 
 func (r *repository) QuotesCount() (int, error) {
-	// todo unit test this
 	var count int64
 	err := r.db.Model(&Quote{}).Count(&count).Error
 	return int(count), err
