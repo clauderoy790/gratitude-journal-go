@@ -10,6 +10,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// Will be set by LDFLAGS
+var VERSION = "UNSET"
+var COMMITHASH = "UNSET"
+
 type Config struct {
 	Database struct {
 		Name     string `yaml:"name"`
