@@ -5,7 +5,14 @@ update-quotes:
 	go run cmd/quotes-updater/main.go
 
 run:
-	go run -ldflags="-X 'github.com/clauderoy790/gratitude-journal/config.VERSION=$(shell cat VERSION)' -X 'github.com/clauderoy790/gratitude-journal/config.COMMITHASH=$(shell git describe --always)'" cmd/gratitude-journal/main.go
+	go run cmd/gratitude-journal/main.go -version $(shell cat VERSION) -commit-hash $(shell git describe --always)
+
+release-major:
+	go run cmd/version/main.go -vi major
+release-minor:
+	go run cmd/version/main.go -vi minor
+release-patch:
+	go run cmd/version/main.go -vi patch
 
 docker-run:
 	docker start (docker ps -a -q --filter="ancestor=mysql/mysql-server")

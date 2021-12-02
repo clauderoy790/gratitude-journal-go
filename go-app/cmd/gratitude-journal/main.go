@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 
 	"github.com/clauderoy790/gratitude-journal/config"
@@ -10,6 +11,17 @@ import (
 )
 
 func main() {
+	verPtr := flag.String("version", "", "version of the app")
+	commitHashPtr := flag.String("commit-hash", "", "current commit hash")
+	flag.Parse()
+
+	if *verPtr == "" || *commitHashPtr == "" {
+		panic(fmt.Sprintf("Invalid version or commit hash. Version: %v, commit hash: %v", *verPtr, *commitHashPtr))
+	}
+
+	config.VERSION = *verPtr
+	config.COMMITHASH = *commitHashPtr
+
 	cfg := config.Get()
 	db, err := repository.ConnectToDatabase(&cfg)
 	if err != nil {
